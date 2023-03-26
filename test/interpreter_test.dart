@@ -3,9 +3,6 @@ import 'package:dox/lexer.dart';
 import 'package:dox/parser.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
-import 'package:collection/collection.dart';
-
-Function eq = const ListEquality().equals;
 
 void main() {
   test('Should parse expressions', () {
