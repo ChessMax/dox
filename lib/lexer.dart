@@ -171,8 +171,57 @@ class Lexer {
               break;
             }
 
-            final value = content.substring(startIndex, i--);
+            Object value = content.substring(startIndex, i--);
             final type = keywords[value];
+
+            switch (type) {
+              case TokenType.falseT:
+                value = false;
+                break;
+              case TokenType.trueT:
+                value = true;
+                break;
+              case TokenType.leftParen:
+              case TokenType.rightParen:
+              case TokenType.leftBrace:
+              case TokenType.rightBrace:
+              case TokenType.comma:
+              case TokenType.dot:
+              case TokenType.minus:
+              case TokenType.plus:
+              case TokenType.semicolon:
+              case TokenType.slash:
+              case TokenType.star:
+              case TokenType.less:
+              case TokenType.lessOrEqual:
+              case TokenType.equal:
+              case TokenType.equalEqual:
+              case TokenType.greater:
+              case TokenType.greaterOrEqual:
+              case TokenType.bang:
+              case TokenType.bangEqual:
+              case TokenType.identifier:
+              case TokenType.string:
+              case TokenType.number:
+              case TokenType.and:
+              case TokenType.classT:
+              case TokenType.elseT:
+              case TokenType.fun:
+              case TokenType.forT:
+              case TokenType.ifT:
+              case TokenType.nil:
+              case TokenType.or:
+              case TokenType.print:
+              case TokenType.returnT:
+              case TokenType.superT:
+              case TokenType.thisT:
+              case TokenType.varT:
+              case TokenType.whileT:
+              case TokenType.eof:
+              case null:
+                break;
+            }
+
             yield Token(type: type ?? TokenType.identifier, value: value);
             break;
           }
