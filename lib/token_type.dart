@@ -1,0 +1,46 @@
+enum TokenType {
+  // one symbol
+  leftParen,
+  rightParen,
+  leftBrace,
+  rightBrace,
+  comma,
+  dot,
+  minus,
+  plus,
+  semicolon,
+  slash,
+  star,
+  // single - two symbols
+  less,
+  lessOrEqual,
+  equal,
+  equalEqual,
+  greater,
+  greaterOrEqual,
+  bang,
+  bangEqual,
+  // complex
+  identifier,
+  string,
+  number,
+
+  // keywords
+  and,
+  classT,
+  elseT,
+  falseT,
+  fun,
+  forT,
+  ifT,
+  nil,
+  or,
+  print,
+  returnT,
+  superT,
+  thisT,
+  trueT,
+  varT,
+  whileT,
+  eof;
+}
