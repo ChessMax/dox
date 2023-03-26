@@ -16,6 +16,7 @@ void main() {
       '5 + 4 > 4': true,
       '8 * 2 == 4 + 4 + 4 + 4': true,
       '6 / 3 != 2': false,
+      '(5 - (3 - 1)) + -1': 2.0,
     };
 
     final interpreter = Interpreter();
