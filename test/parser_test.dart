@@ -1,8 +1,5 @@
-import 'package:dox/expr.dart';
 import 'package:dox/lexer.dart';
 import 'package:dox/parser.dart';
-import 'package:dox/token.dart';
-import 'package:dox/token_type.dart';
 import 'package:dox/visitor.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
@@ -19,6 +16,11 @@ void main() {
       '!!!!(true)': '!!!!true',
       '8 - 3 * 2': '(8.0 - (3.0 * 2.0))',
       '(8 - 3) * 2': '((8.0 - 3.0) * 2.0)',
+      '5 + 4 > 4': '((5.0 + 4.0) > 4.0)',
+      '8 * 2 == 4 + 4 + 4 + 4': '((8.0 * 2.0) == (((4.0 + 4.0) + 4.0) + 4.0))',
+      // 'true and false': '(true and false)',
+      // 'false or false': '(false or false)',
+      // 'false or true and false': '(false or (true and false))',
     };
 
     final printer = PrintVisitor();

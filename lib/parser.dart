@@ -30,9 +30,71 @@ class Parser {
   }
 
   Expr? parseExpression() {
-    Expr? expr = parseTerm();
+    Expr? expr = parseEquality();
     return expr;
   }
+
+  Expr parseEquality() {
+    Expr expr = parseComparison();
+
+    Token? token = peek;
+    while (token != null &&
+        (token.type == TokenType.equalEqual ||
+            token.type == TokenType.bangEqual)) {
+      consume();
+      final right = parseComparison();
+      expr = BinaryExpr(left: expr, operator: token, right: right);
+      token = peek;
+    }
+
+    return expr;
+  }
+
+  Expr parseComparison() {
+    Expr expr = parseTerm();
+
+    Token? token = peek;
+    while (token != null &&
+        (token.type == TokenType.less ||
+            token.type == TokenType.greater ||
+            token.type == TokenType.lessOrEqual ||
+            token.type == TokenType.greaterOrEqual)) {
+      consume();
+      final right = parseTerm();
+      expr = BinaryExpr(left: expr, operator: token, right: right);
+      token = peek;
+    }
+
+    return expr;
+  }
+
+  // Expr parseOr() {
+  //   Expr expr = parseAnd();
+  //
+  //   Token? token = peek;
+  //   while (token != null && token.type == TokenType.or) {
+  //     consume();
+  //     final right = parseAnd();
+  //     expr = BinaryExpr(left: expr, operator: token, right: right);
+  //     token = peek;
+  //   }
+  //
+  //   return expr;
+  // }
+
+  // Expr parseAnd() {
+  //   Expr expr = parseTerm();
+  //
+  //   Token? token = peek;
+  //   while (token != null && token.type == TokenType.and) {
+  //     consume();
+  //     final right = parseTerm();
+  //     expr = BinaryExpr(left: expr, operator: token, right: right);
+  //     token = peek;
+  //   }
+  //
+  //   return expr;
+  // }
 
   Expr parseTerm() {
     Expr expr = parseFactor();
