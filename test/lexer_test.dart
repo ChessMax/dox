@@ -54,7 +54,7 @@ void main() {
       ],
       [
         Token(type: TokenType.bang),
-        Token(type: TokenType.trueT, value: 'true'),
+        Token(type: TokenType.trueT, value: true),
         Token(type: TokenType.eof),
       ],
     ];
