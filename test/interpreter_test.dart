@@ -5,6 +5,8 @@ import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
 void main() {
+  final interpreter = Interpreter();
+
   test('Should parse expressions', () {
     final inputs = <String, Object?>{
       '(2 + 3)': 5.0,
@@ -19,7 +21,6 @@ void main() {
       '(5 - (3 - 1)) + -1': 2.0,
     };
 
-    final interpreter = Interpreter();
     for (final kv in inputs.entries) {
       final input = kv.key;
       final expected = kv.value;
@@ -27,8 +28,7 @@ void main() {
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
       final expr = parser.parse();
-
-      final actual = expr?.accept(interpreter);
+      final actual = interpreter.evaluate(expr!);
 
       expect(actual, expected, reason: input);
     }

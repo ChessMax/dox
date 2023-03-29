@@ -1,8 +1,29 @@
+import 'package:dox/dox.dart';
 import 'package:dox/expr.dart';
 import 'package:dox/token_type.dart';
 import 'package:dox/visitor.dart';
 
 class Interpreter extends Visitor<Object?> {
+  void interpret(Expr expr) {
+    try {
+      final value = evaluate(expr);
+      print(stringify(value));
+    } catch (e) {
+      Dox.runtimeError(e);
+    }
+  }
+
+  String stringify(Object? value) {
+    if (value == null) return 'nil';
+    if (value is double) {
+      final text = value.toString();
+      return text.endsWith('.0') ? text.substring(0, text.length - 2) : text;
+    }
+    return value.toString();
+  }
+
+  Object? evaluate(Expr expr) => expr.accept(this);
+
   @override
   Object? visitLiteral(LiteralExpr expr) => expr.value;
 
