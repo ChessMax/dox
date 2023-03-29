@@ -6,6 +6,12 @@ abstract class Visitor<T> {
   T visitBinary(BinaryExpr expr);
 
   T visitLiteral(LiteralExpr expr);
+
+  T visitExprStatement(ExprStatement statement);
+
+  T visitPrintStatement(PrintStatement statement);
+
+  T visitProgram(Program program);
 }
 
 class PrintVisitor extends Visitor<String> {
@@ -19,4 +25,16 @@ class PrintVisitor extends Visitor<String> {
   @override
   String visitUnary(UnaryExpr expr) =>
       '${expr.operator}${expr.expr.accept(this)}';
+
+  @override
+  String visitExprStatement(ExprStatement statement) =>
+      '${statement.expr.accept(this)};';
+
+  @override
+  String visitPrintStatement(PrintStatement statement) =>
+      'print ${statement.expr.accept(this)}';
+
+  @override
+  String visitProgram(Program program) =>
+      program.statements.map((statement) => statement.accept(this)).join('\n');
 }

@@ -29,7 +29,7 @@ void main() {
       final parser = Parser(tokens: tokens.toList());
       final expr = parser.parse();
 
-      final actual = expr?.accept(printer);
+      final actual = expr.accept(printer);
 
       expect(actual, expected);
     }

@@ -1,25 +1,22 @@
 import 'package:dox/dox.dart';
 import 'package:dox/expr.dart';
+import 'package:dox/output.dart';
+import 'package:dox/stringify.dart';
 import 'package:dox/token_type.dart';
 import 'package:dox/visitor.dart';
 
 class Interpreter extends Visitor<Object?> {
+  final Output _output;
+
+  Interpreter([this._output = const StandardOutput()]);
+
   void interpret(Expr expr) {
     try {
       final value = evaluate(expr);
-      print(stringify(value));
+      _output.print(stringify(value));
     } catch (e) {
       Dox.runtimeError(e);
     }
-  }
-
-  String stringify(Object? value) {
-    if (value == null) return 'nil';
-    if (value is double) {
-      final text = value.toString();
-      return text.endsWith('.0') ? text.substring(0, text.length - 2) : text;
-    }
-    return value.toString();
   }
 
   Object? evaluate(Expr expr) => expr.accept(this);
@@ -159,5 +156,25 @@ class Interpreter extends Visitor<Object?> {
       case TokenType.eof:
         return null;
     }
+  }
+
+  @override
+  Object? visitExprStatement(ExprStatement statement) =>
+      statement.expr.accept(this);
+
+  @override
+  Object? visitPrintStatement(PrintStatement statement) {
+    final value = stringify(evaluate(statement.expr));
+    _output.print(value);
+    return null;
+  }
+
+  @override
+  Object? visitProgram(Program program) {
+    Object? result;
+    for (final statement in program.statements) {
+      result = evaluate(statement);
+    }
+    return result;
   }
 }

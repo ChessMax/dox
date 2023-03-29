@@ -26,7 +26,7 @@ abstract class Dox {
       final parser = Parser(tokens: tokens.toList());
       final expr = parser.parse();
       final printer = PrintVisitor();
-      print(expr?.accept(printer));
+      print(expr.accept(printer));
     } catch (e) {
       print(e);
     }

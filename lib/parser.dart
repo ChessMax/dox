@@ -8,6 +8,8 @@ class Parser {
 
   Parser({required this.tokens});
 
+  bool get isAtEnd => position >= tokens.length;
+
   Token? get peek => position < tokens.length ? tokens[position] : null;
 
   Token? get peekNext =>
@@ -15,22 +17,49 @@ class Parser {
 
   void consume() => ++position;
 
-  Expr? parse() {
-    final expr = parseExpression();
-    if (expr != null) {
-      final eof = peek;
-      if (eof != null && eof.type == TokenType.eof) {
-        return expr;
-      } else {
-        throw 'Expected end of file not found';
-      }
+  void consumeToken(TokenType type) {
+    final token = peek;
+    if (token != null && token.type == type) {
+      consume();
     } else {
-      throw 'Expected expression not found.';
+      throw 'Expected $type not found';
     }
   }
 
-  Expr? parseExpression() {
-    Expr? expr = parseEquality();
+  bool tryConsumeToken(TokenType type) {
+    final token = peek;
+    if (token != null && token.type == type) {
+      consume();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Expr parse() => parseProgram();
+
+  Expr parseProgram() {
+    final statements = <Expr>[];
+    while (!isAtEnd && peek?.type != TokenType.eof) {
+      statements.add(parseStatement());
+    }
+    consumeToken(TokenType.eof);
+    return Program(statements: statements);
+  }
+
+  Expr parseStatement() {
+    if (tryConsumeToken(TokenType.print)) {
+      final expr = parseExpression();
+      consumeToken(TokenType.semicolon);
+      return PrintStatement(expr: expr);
+    }
+    final expr = parseExpression();
+    consumeToken(TokenType.semicolon);
+    return expr;
+  }
+
+  Expr parseExpression() {
+    Expr expr = parseEquality();
     return expr;
   }
 
@@ -148,11 +177,6 @@ class Parser {
     consume();
 
     final expr = parseExpression();
-
-    if (expr == null) {
-      throw 'Expected expression not found';
-    }
-
     final rightParen = peek;
     if (rightParen == null || rightParen.type != TokenType.rightParen) {
       throw 'Expected closing parenthesis not found';
