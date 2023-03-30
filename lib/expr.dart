@@ -45,6 +45,15 @@ class LiteralExpr extends Expr {
   String toString() => value.toString();
 }
 
+class VariableExpr extends Expr {
+  final Token name;
+
+  VariableExpr({required this.name});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitVariable(this);
+}
+
 abstract class Statement {
   T accept<T>(Visitor<T> visitor);
 }
@@ -58,14 +67,14 @@ class ExprStatement extends Statement {
   T accept<T>(Visitor<T> visitor) => visitor.visitExprStatement(this);
 }
 
-class VariableStatement extends Statement {
+class VariableDeclaration extends Statement {
   final Token identifier;
   final Expr? expr;
 
-  VariableStatement({required this.identifier, this.expr});
+  VariableDeclaration({required this.identifier, this.expr});
 
   @override
-  T accept<T>(Visitor<T> visitor) => visitor.visitVariable(this);
+  T accept<T>(Visitor<T> visitor) => visitor.visitVariableDeclaration(this);
 }
 
 class PrintStatement extends Statement {

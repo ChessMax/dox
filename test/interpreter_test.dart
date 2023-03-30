@@ -79,6 +79,7 @@ void main() {
       'var name;': '',
       'var surname = "Ivanov";': '',
       'var age = 5 + 9 * 10;': '',
+      'var middleName; var id;': '',
     };
 
     for (final kv in inputs.entries) {

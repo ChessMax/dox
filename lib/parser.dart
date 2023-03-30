@@ -71,7 +71,7 @@ class Parser {
 
     consumeSemicolon();
 
-    return VariableStatement(identifier: identifier, expr: expr);
+    return VariableDeclaration(identifier: identifier, expr: expr);
   }
 
   Statement parseStatement() {
@@ -193,10 +193,10 @@ class Parser {
 
   Expr parsePrimary() {
     final literal = tryParseLiteral();
-    if (literal != null) return literal;
+    if (literal != null) return LiteralExpr(value: literal);
 
     final identifier = tryParseIdentifier();
-    if (identifier != null) return identifier;
+    if (identifier != null) return VariableExpr(name: identifier);
 
     final leftParen = peek;
     if (leftParen == null || leftParen.type != TokenType.leftParen) {
@@ -316,7 +316,7 @@ class Parser {
     return null;
   }
 
-  Expr? tryParseLiteral() {
+  Token? tryParseLiteral() {
     final token = peek;
     if (token != null) {
       if (token.type == TokenType.number ||
@@ -325,19 +325,19 @@ class Parser {
           token.type == TokenType.falseT ||
           token.type == TokenType.nil) {
         consume();
-        return LiteralExpr(value: token.value);
+        return token;
       }
     }
 
     return null;
   }
 
-  Expr? tryParseIdentifier() {
+  Token? tryParseIdentifier() {
     final token = peek;
     if (token != null) {
       if (token.type == TokenType.identifier) {
         consume();
-        return LiteralExpr(value: token.value);
+        return token;
       }
     }
 

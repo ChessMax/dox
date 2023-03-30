@@ -182,10 +182,13 @@ class Interpreter extends Visitor<Object?> {
   }
 
   @override
-  Object? visitVariable(VariableStatement variable) {
-    final expr = variable.expr;
+  Object? visitVariableDeclaration(VariableDeclaration declaration) {
+    final expr = declaration.expr;
     final value = expr != null ? evaluate(expr) : null;
-    environment[variable.identifier.value as String] = value;
+    environment[declaration.identifier.value as String] = value;
     return null;
   }
+
+  @override
+  Object? visitVariable(VariableExpr variable) => environment[variable.name];
 }
