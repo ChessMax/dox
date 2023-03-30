@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:dox/expr.dart';
 import 'package:dox/token.dart';
 import 'package:dox/token_type.dart';
