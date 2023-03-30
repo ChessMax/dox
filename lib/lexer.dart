@@ -126,7 +126,7 @@ class Lexer {
             String char = content[i];
             ++i;
             if (char == '"') {
-              value = content.substring(startIndex, i - 1);
+              value = content.substring(startIndex, --i);
               break;
             }
           }

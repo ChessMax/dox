@@ -65,4 +65,21 @@ void main() {
       expect(tokens, output);
     }
   });
+  test('Should parse statements', () {
+    final inputs = ['print "one";'];
+    final outputs = [
+      [
+        Token(type: TokenType.print, value: 'print'),
+        Token(type: TokenType.string, value: 'one'),
+        Token(type: TokenType.semicolon),
+        Token(type: TokenType.eof),
+      ],
+    ];
+    for (int i = 0; i < inputs.length; ++i) {
+      final input = inputs[i];
+      final output = outputs[i];
+      final tokens = Lexer.enumerate(input).toList();
+      expect(tokens, output);
+    }
+  });
 }
