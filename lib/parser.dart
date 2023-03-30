@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dox/expr.dart';
 import 'package:dox/token.dart';
 import 'package:dox/token_type.dart';
@@ -17,10 +19,13 @@ class Parser {
 
   void consume() => ++position;
 
-  void consumeToken(TokenType type) {
+  Token consumeSemicolon() => consumeToken(TokenType.semicolon);
+
+  Token consumeToken(TokenType type) {
     final token = peek;
     if (token != null && token.type == type) {
       consume();
+      return token;
     } else {
       throw 'Expected $type not found';
     }
@@ -59,7 +64,22 @@ class Parser {
     return ExprStatement(expr: expr);
   }
 
+  Statement parseVariableStatement() {
+    Expr? expr;
+    final identifier = consumeToken(TokenType.identifier);
+    if (tryConsumeToken(TokenType.equal)) {
+      expr = parseExpression();
+    }
+
+    consumeSemicolon();
+
+    return VariableStatement(identifier: identifier, expr: expr);
+  }
+
   Statement parseStatement() {
+    if (tryConsumeToken(TokenType.varT)) {
+      return parseVariableStatement();
+    }
     if (tryConsumeToken(TokenType.print)) {
       return parsePrintStatement();
     }
@@ -176,6 +196,9 @@ class Parser {
   Expr parsePrimary() {
     final literal = tryParseLiteral();
     if (literal != null) return literal;
+
+    final identifier = tryParseIdentifier();
+    if (identifier != null) return identifier;
 
     final leftParen = peek;
     if (leftParen == null || leftParen.type != TokenType.leftParen) {
@@ -303,6 +326,18 @@ class Parser {
           token.type == TokenType.trueT ||
           token.type == TokenType.falseT ||
           token.type == TokenType.nil) {
+        consume();
+        return LiteralExpr(value: token.value);
+      }
+    }
+
+    return null;
+  }
+
+  Expr? tryParseIdentifier() {
+    final token = peek;
+    if (token != null) {
+      if (token.type == TokenType.identifier) {
         consume();
         return LiteralExpr(value: token.value);
       }

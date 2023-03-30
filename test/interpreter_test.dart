@@ -73,4 +73,26 @@ void main() {
       expect(output.output, expected, reason: input);
     }
   });
+
+  test('Should initialize variables', () {
+    final inputs = <String, Object?>{
+      'var name;': '',
+      'var surname = "Ivanov";': '',
+      'var age = 5 + 9 * 10;': '',
+    };
+
+    for (final kv in inputs.entries) {
+      output.clear();
+
+      final input = kv.key;
+      final expected = kv.value;
+
+      final tokens = Lexer.enumerate(input);
+      final parser = Parser(tokens: tokens.toList());
+      final expr = parser.parse();
+      interpreter.evaluate(expr);
+
+      expect(output.output, expected, reason: input);
+    }
+  });
 }

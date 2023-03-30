@@ -12,6 +12,8 @@ abstract class Visitor<T> {
   T visitPrintStatement(PrintStatement statement);
 
   T visitProgram(Program program);
+
+  T visitVariable(VariableStatement variable);
 }
 
 class PrintVisitor extends Visitor<String> {
@@ -37,4 +39,12 @@ class PrintVisitor extends Visitor<String> {
   @override
   String visitProgram(Program program) =>
       program.statements.map((statement) => statement.accept(this)).join('\n');
+
+  @override
+  String visitVariable(VariableStatement variable) {
+    if (variable.expr != null) {
+      return 'var ${variable.identifier.value} = ${variable.expr};';
+    }
+    return 'var ${variable.identifier.value}';
+  }
 }

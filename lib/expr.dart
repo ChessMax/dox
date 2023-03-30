@@ -58,6 +58,16 @@ class ExprStatement extends Statement {
   T accept<T>(Visitor<T> visitor) => visitor.visitExprStatement(this);
 }
 
+class VariableStatement extends Statement {
+  final Token identifier;
+  final Expr? expr;
+
+  VariableStatement({required this.identifier, this.expr});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitVariable(this);
+}
+
 class PrintStatement extends Statement {
   final Expr expr;
 

@@ -7,6 +7,7 @@ import 'package:dox/visitor.dart';
 
 class Interpreter extends Visitor<Object?> {
   final Output _output;
+  final environment = <String, Object?>{};
 
   Interpreter([this._output = const StandardOutput()]);
 
@@ -178,5 +179,13 @@ class Interpreter extends Visitor<Object?> {
       result = evaluateStatement(statement);
     }
     return result;
+  }
+
+  @override
+  Object? visitVariable(VariableStatement variable) {
+    final expr = variable.expr;
+    final value = expr != null ? evaluate(expr) : null;
+    environment[variable.identifier.value as String] = value;
+    return null;
   }
 }
