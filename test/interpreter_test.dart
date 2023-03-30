@@ -54,6 +54,9 @@ void main() {
       'print 6 / 3 != 2;': 'false',
       'print (5 - (3 - 1)) + -1;': '2',
       'print 2.3 + 3.2;': '5.5',
+      'print "one";': 'one',
+      'print true;': 'true',
+      'print 2 + 1;': '3',
     };
 
     for (final kv in inputs.entries) {
