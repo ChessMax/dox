@@ -45,7 +45,11 @@ class LiteralExpr extends Expr {
   String toString() => value.toString();
 }
 
-class ExprStatement extends Expr {
+abstract class Statement {
+  T accept<T>(Visitor<T> visitor);
+}
+
+class ExprStatement extends Statement {
   final Expr expr;
 
   ExprStatement({required this.expr});
@@ -54,7 +58,7 @@ class ExprStatement extends Expr {
   T accept<T>(Visitor<T> visitor) => visitor.visitExprStatement(this);
 }
 
-class PrintStatement extends Expr {
+class PrintStatement extends Statement {
   final Expr expr;
 
   PrintStatement({required this.expr});
@@ -64,7 +68,7 @@ class PrintStatement extends Expr {
 }
 
 class Program extends Expr {
-  final List<Expr> statements;
+  final List<Statement> statements;
 
   Program({required this.statements});
 

@@ -21,6 +21,8 @@ class Interpreter extends Visitor<Object?> {
 
   Object? evaluate(Expr expr) => expr.accept(this);
 
+  Object? evaluateStatement(Statement statement) => statement.accept(this);
+
   @override
   Object? visitLiteral(LiteralExpr expr) => expr.value;
 
@@ -173,7 +175,7 @@ class Interpreter extends Visitor<Object?> {
   Object? visitProgram(Program program) {
     Object? result;
     for (final statement in program.statements) {
-      result = evaluate(statement);
+      result = evaluateStatement(statement);
     }
     return result;
   }

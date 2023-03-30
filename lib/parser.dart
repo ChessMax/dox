@@ -39,7 +39,7 @@ class Parser {
   Expr parse() => parseProgram();
 
   Expr parseProgram() {
-    final statements = <Expr>[];
+    final statements = <Statement>[];
     while (!isAtEnd && peek?.type != TokenType.eof) {
       statements.add(parseStatement());
     }
@@ -47,15 +47,23 @@ class Parser {
     return Program(statements: statements);
   }
 
-  Expr parseStatement() {
-    if (tryConsumeToken(TokenType.print)) {
-      final expr = parseExpression();
-      consumeToken(TokenType.semicolon);
-      return PrintStatement(expr: expr);
-    }
+  Statement parsePrintStatement() {
     final expr = parseExpression();
     consumeToken(TokenType.semicolon);
-    return expr;
+    return PrintStatement(expr: expr);
+  }
+
+  Statement parseExpressionStatement() {
+    final expr = parseExpression();
+    consumeToken(TokenType.semicolon);
+    return ExprStatement(expr: expr);
+  }
+
+  Statement parseStatement() {
+    if (tryConsumeToken(TokenType.print)) {
+      return parsePrintStatement();
+    }
+    return parseExpressionStatement();
   }
 
   Expr parseExpression() {
