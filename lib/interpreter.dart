@@ -190,5 +190,10 @@ class Interpreter extends Visitor<Object?> {
   }
 
   @override
-  Object? visitVariable(VariableExpr variable) => environment[variable.name];
+  Object? visitVariable(VariableExpr variable) {
+    final value = environment[variable.name.value];
+    return value;
+  }
+
+  Object? readVariable(String name) => environment[name];
 }

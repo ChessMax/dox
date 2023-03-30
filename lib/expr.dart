@@ -36,7 +36,7 @@ class UnaryExpr extends Expr {
 class LiteralExpr extends Expr {
   final Object? value;
 
-  LiteralExpr({required this.value});
+  LiteralExpr({required this.value}) : assert(value is! Token);
 
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitLiteral(this);

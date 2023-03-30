@@ -80,6 +80,9 @@ void main() {
       'var surname = "Ivanov";': '',
       'var age = 5 + 9 * 10;': '',
       'var middleName; var id;': '',
+      'var movie = "Sweet Home"; print movie;': 'Sweet Home',
+      'var a = 1; var b = 2; var c = a + b; print c;': '3',
+      'var variable; print variable;': 'nil',
     };
 
     for (final kv in inputs.entries) {

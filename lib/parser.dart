@@ -193,7 +193,7 @@ class Parser {
 
   Expr parsePrimary() {
     final literal = tryParseLiteral();
-    if (literal != null) return LiteralExpr(value: literal);
+    if (literal != null) return LiteralExpr(value: literal.value);
 
     final identifier = tryParseIdentifier();
     if (identifier != null) return VariableExpr(name: identifier);
