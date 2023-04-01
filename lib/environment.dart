@@ -9,6 +9,7 @@ class Environment {
   void setValue(String name, Object? value) {
     if (_state.containsKey(name)) {
       _state[name] = value;
+      return;
     }
     final parent = this.parent;
     if (parent != null) {
