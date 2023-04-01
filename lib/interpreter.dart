@@ -8,7 +8,7 @@ import 'package:dox/visitor.dart';
 
 class Interpreter extends Visitor<Object?> {
   final Output _output;
-  final environment = Environment();
+  Environment environment = Environment();
 
   Interpreter([this._output = const StandardOutput()]);
 
@@ -204,7 +204,15 @@ class Interpreter extends Visitor<Object?> {
 
   @override
   Object? visitBlock(Block block) {
-    block.statements.forEach(execute);
+    final oldEnvironment = environment;
+
+    try {
+      environment = Environment(parent: environment);
+      block.statements.forEach(execute);
+    } finally {
+      environment = oldEnvironment;
+    }
+
     return null;
   }
 }
