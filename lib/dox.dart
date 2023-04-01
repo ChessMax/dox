@@ -55,6 +55,7 @@ abstract class Dox {
   }
 
   static void runRepl() {
+    // TODO: could it be better?
     Statement? tryParseExpr(List<Token> tokens) {
       final parser = Parser(tokens: tokens);
       try {
