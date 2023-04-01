@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:dox/expr.dart';
 import 'package:dox/interpreter.dart';
 import 'package:dox/lexer.dart';
 import 'package:dox/parser.dart';
+import 'package:dox/stringify.dart';
+import 'package:dox/token.dart';
+import 'package:dox/token_type.dart';
 
 abstract class Dox {
   static bool _hadError = false;
@@ -51,15 +55,26 @@ abstract class Dox {
   }
 
   static void runRepl() {
+    Statement? tryParseExpr(List<Token> tokens) {
+      final parser = Parser(tokens: tokens);
+      try {
+        final expr = parser.parseExpression();
+        return PrintStatement(expr: expr);
+      } catch (e) {
+        return null;
+      }
+    }
+
     final interpreter = Interpreter();
     while (true) {
       try {
         stdout.write('> ');
         final input = stdin.readLineSync();
         if (input == null) break;
-        final tokens = Lexer.enumerate(input);
-        final parser = Parser(tokens: tokens.toList());
-        final statement = parser.parse();
+        final tokens = Lexer.enumerate(input).toList();
+        final statement =
+            tryParseExpr(tokens) ?? Parser(tokens: tokens).parse();
+
         if (_hadError) {
           _hadError = false;
           print('Parsing error: ');
