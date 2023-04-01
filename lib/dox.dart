@@ -43,7 +43,7 @@ abstract class Dox {
 
       if (_hadError) exit(65);
 
-      interpreter.evaluate(expr);
+      interpreter.execute(expr);
     } catch (e) {
       print(e);
       exit(65);
@@ -59,14 +59,14 @@ abstract class Dox {
         if (input == null) break;
         final tokens = Lexer.enumerate(input);
         final parser = Parser(tokens: tokens.toList());
-        final expr = parser.parse();
+        final statement = parser.parse();
         if (_hadError) {
           _hadError = false;
           print('Parsing error: ');
           continue;
         }
 
-        interpreter.evaluate(expr);
+        interpreter.execute(statement);
 
         if (_hadRuntimeError) {
           _hadRuntimeError = false;

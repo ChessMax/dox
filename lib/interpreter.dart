@@ -1,4 +1,3 @@
-import 'package:dox/dox.dart';
 import 'package:dox/expr.dart';
 import 'package:dox/output.dart';
 import 'package:dox/stringify.dart';
@@ -11,14 +10,7 @@ class Interpreter extends Visitor<Object?> {
 
   Interpreter([this._output = const StandardOutput()]);
 
-  void interpret(Expr expr) {
-    try {
-      final value = evaluate(expr);
-      _output.print(stringify(value));
-    } catch (e) {
-      Dox.runtimeError(e);
-    }
-  }
+  void execute(Statement statement) => statement.accept(this);
 
   Object? evaluate(Expr expr) => expr.accept(this);
 

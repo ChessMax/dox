@@ -104,7 +104,7 @@ class PrintStatement extends Statement {
   T accept<T>(Visitor<T> visitor) => visitor.visitPrintStatement(this);
 }
 
-class Program extends Expr {
+class Program extends Statement {
   final List<Statement> statements;
 
   Program({required this.statements});

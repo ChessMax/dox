@@ -40,9 +40,9 @@ class Parser {
     }
   }
 
-  Expr parse() => parseProgram();
+  Statement parse() => parseProgram();
 
-  Expr parseProgram() {
+  Statement parseProgram() {
     final statements = <Statement>[];
     while (!isAtEnd && peek?.type != TokenType.eof) {
       statements.add(parseStatement());

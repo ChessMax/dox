@@ -32,7 +32,7 @@ void main() {
 
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
-      final expr = parser.parse();
+      final expr = parser.parseExpression();
       final actual = interpreter.evaluate(expr);
 
       expect(actual, expected, reason: input);
@@ -68,8 +68,8 @@ void main() {
 
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
-      final expr = parser.parse();
-      interpreter.evaluate(expr);
+      final statement = parser.parse();
+      interpreter.execute(statement);
 
       expect(output.output, expected, reason: input);
     }
@@ -94,8 +94,8 @@ void main() {
 
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
-      final expr = parser.parse();
-      interpreter.evaluate(expr);
+      final statement = parser.parse();
+      interpreter.execute(statement);
 
       expect(output.output, expected, reason: input);
     }
@@ -118,8 +118,8 @@ void main() {
 
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
-      final expr = parser.parse();
-      interpreter.evaluate(expr);
+      final statement = parser.parse();
+      interpreter.execute(statement);
 
       expect(output.output, expected, reason: input);
     }
