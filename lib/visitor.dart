@@ -1,4 +1,5 @@
 import 'package:dox/expr.dart';
+import 'package:dox/statement.dart';
 
 abstract class Visitor<T> {
   T visitUnary(UnaryExpr expr);

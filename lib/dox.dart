@@ -1,12 +1,10 @@
 import 'dart:io';
 
-import 'package:dox/expr.dart';
 import 'package:dox/interpreter.dart';
 import 'package:dox/lexer.dart';
 import 'package:dox/parser.dart';
-import 'package:dox/stringify.dart';
+import 'package:dox/statement.dart';
 import 'package:dox/token.dart';
-import 'package:dox/token_type.dart';
 
 abstract class Dox {
   static bool _hadError = false;

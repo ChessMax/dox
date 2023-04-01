@@ -1,5 +1,6 @@
 import 'package:dox/expr.dart';
 import 'package:dox/output.dart';
+import 'package:dox/statement.dart';
 import 'package:dox/stringify.dart';
 import 'package:dox/token_type.dart';
 import 'package:dox/visitor.dart';
