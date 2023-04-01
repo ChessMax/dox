@@ -1,14 +1,14 @@
 class Environment {
   final Environment? parent;
-  final _environment = <String, Object?>{};
+  final _state = <String, Object?>{};
 
   Environment({this.parent});
 
-  void define(String name, Object? value) => _environment[name] = value;
+  void define(String name, Object? value) => _state[name] = value;
 
   void setValue(String name, Object? value) {
-    if (_environment.containsKey(name)) {
-      _environment[name] = value;
+    if (_state.containsKey(name)) {
+      _state[name] = value;
     }
     final parent = this.parent;
     if (parent != null) {
@@ -19,8 +19,8 @@ class Environment {
   }
 
   Object? getValue(String name) {
-    if (_environment.containsKey(name)) {
-      return _environment[name];
+    if (_state.containsKey(name)) {
+      return _state[name];
     }
 
     final parent = this.parent;
