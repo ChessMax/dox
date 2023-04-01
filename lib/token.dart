@@ -21,9 +21,9 @@ class Token extends Equatable {
       case TokenType.rightParen:
         return ')';
       case TokenType.leftBrace:
-        return '[';
+        return '{';
       case TokenType.rightBrace:
-        return ']';
+        return '}';
       case TokenType.comma:
         return ',';
       case TokenType.dot:

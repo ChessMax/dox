@@ -35,4 +35,24 @@ void main() {
       expect(actual, expected);
     }
   });
+
+  test('Should parse statements', () {
+    final inputs = <String, String>{
+      'var a = 5; { var b = 6; }': 'var a = 5.0;\n{\nvar b = 6.0;\n}',
+    };
+
+    final printer = PrintVisitor();
+    for (final kv in inputs.entries) {
+      final input = kv.key;
+      final expected = kv.value;
+
+      final tokens = Lexer.enumerate(input);
+      final parser = Parser(tokens: tokens.toList());
+      final expr = parser.parse();
+
+      final actual = expr.accept(printer);
+
+      expect(actual, expected);
+    }
+  });
 }

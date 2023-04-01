@@ -21,6 +21,8 @@ abstract class Visitor<T> {
   T visitAssign(AssignExpr assign);
 
   T visitParen(ParenExpr paren);
+
+  T visitBlock(Block block);
 }
 
 class PrintVisitor extends Visitor<String> {
@@ -70,5 +72,13 @@ class PrintVisitor extends Visitor<String> {
       return paren.expr.accept(this);
     }
     return '(${paren.expr.accept(this)})';
+  }
+
+  @override
+  String visitBlock(Block block) {
+    StringBuffer buffer = StringBuffer("{\n");
+    buffer.writeAll(block.statements.map<String>((e) => e.accept(this)), '\n');
+    buffer.write('\n}');
+    return buffer.toString();
   }
 }

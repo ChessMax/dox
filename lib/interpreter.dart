@@ -207,4 +207,10 @@ class Interpreter extends Visitor<Object?> {
 
   @override
   Object? visitParen(ParenExpr paren) => evaluate(paren.expr);
+
+  @override
+  Object? visitBlock(Block block) {
+    block.statements.forEach(execute);
+    return null;
+  }
 }

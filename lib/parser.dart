@@ -76,9 +76,21 @@ class Parser {
     return VariableDeclaration(identifier: identifier, expr: expr);
   }
 
+  Statement parseBlock() {
+    final statements = <Statement>[];
+    while (!isAtEnd && peek?.type != TokenType.rightBrace) {
+      statements.add(parseStatement());
+    }
+    consumeToken(TokenType.rightBrace);
+    return Block(statements: statements);
+  }
+
   Statement parseStatement() {
     if (tryConsumeToken(TokenType.varT)) {
       return parseVariableStatement();
+    }
+    if (tryConsumeToken(TokenType.leftBrace)) {
+      return parseBlock();
     }
     if (tryConsumeToken(TokenType.print)) {
       return parsePrintStatement();

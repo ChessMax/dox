@@ -34,6 +34,14 @@ class PrintStatement extends Statement {
   T accept<T>(Visitor<T> visitor) => visitor.visitPrintStatement(this);
 }
 
+class Block extends Statement {
+  final List<Statement> statements;
+  Block({required this.statements});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitBlock(this);
+}
+
 class Program extends Statement {
   final List<Statement> statements;
 
