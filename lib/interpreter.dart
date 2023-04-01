@@ -1,3 +1,4 @@
+import 'package:dox/environment.dart';
 import 'package:dox/expr.dart';
 import 'package:dox/output.dart';
 import 'package:dox/statement.dart';
@@ -7,7 +8,7 @@ import 'package:dox/visitor.dart';
 
 class Interpreter extends Visitor<Object?> {
   final Output _output;
-  final environment = <String, Object?>{};
+  final environment = Environment();
 
   Interpreter([this._output = const StandardOutput()]);
 
@@ -180,29 +181,21 @@ class Interpreter extends Visitor<Object?> {
   Object? visitVariableDeclaration(VariableDeclaration declaration) {
     final expr = declaration.expr;
     final value = expr != null ? evaluate(expr) : null;
-    environment[declaration.identifier.value as String] = value;
+    environment.define(declaration.identifier.value as String, value);
     return null;
   }
 
   @override
   Object? visitVariable(VariableExpr variable) {
     final name = variable.name.value as String;
-    if (environment.containsKey(name)) {
-      return environment[name];
-    }
-    throw 'Runtime error: undefined variable "$name".';
+    return environment.getValue(name);
   }
 
   @override
   Object? visitAssign(AssignExpr assign) {
     final name = assign.name.value as String;
-    if (environment.containsKey(name)) {
-      final value = evaluate(assign.value);
-      environment[name] = value;
-      return value;
-    } else {
-      throw 'Runtime error: undefined variable "$name".';
-    }
+    final value = evaluate(assign.value);
+    environment.setValue(name, value);
   }
 
   @override
