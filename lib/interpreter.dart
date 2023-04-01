@@ -196,6 +196,7 @@ class Interpreter extends Visitor<Object?> {
     final name = assign.name.value as String;
     final value = evaluate(assign.value);
     environment.setValue(name, value);
+    return value;
   }
 
   @override
