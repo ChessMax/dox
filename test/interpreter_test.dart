@@ -21,6 +21,7 @@ void main() {
       '8 * 2 == 4 + 4 + 4 + 4;': true,
       '6 / 3 != 2;': false,
       '(5 - (3 - 1)) + -1;': 2.0,
+      '"hello " + "world";': 'hello world'
     };
 
     for (final kv in inputs.entries) {
@@ -83,6 +84,30 @@ void main() {
       'var movie = "Sweet Home"; print movie;': 'Sweet Home',
       'var a = 1; var b = 2; var c = a + b; print c;': '3',
       'var variable; print variable;': 'nil',
+    };
+
+    for (final kv in inputs.entries) {
+      output.clear();
+
+      final input = kv.key;
+      final expected = kv.value;
+
+      final tokens = Lexer.enumerate(input);
+      final parser = Parser(tokens: tokens.toList());
+      final expr = parser.parse();
+      interpreter.evaluate(expr);
+
+      expect(output.output, expected, reason: input);
+    }
+  });
+
+  test('Should assign variable', () {
+    final inputs = <String, Object?>{
+      'var name; name = "Ivan"; print name;': 'Ivan',
+      'var a = 5; var b = 6; var c; c = a + b; print c;': '11',
+      'var a = 5; a = 6; a = 7; print a;': '7',
+      'var a = 5; a = true; print a;': 'true',
+      'var a = false; a = nil; print a;': 'nil',
     };
 
     for (final kv in inputs.entries) {

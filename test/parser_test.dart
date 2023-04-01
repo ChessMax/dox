@@ -7,10 +7,10 @@ import 'package:test/scaffolding.dart';
 void main() {
   test('Should parse expressions', () {
     final inputs = <String, String>{
-      '(2);': '2.0;',
+      '(2);': '(2.0);',
       '-5;': '-5.0;',
       '!true;': '!true;',
-      '!!!!(true);': '!!!!true;',
+      '!!!!(true);': '!!!!(true);',
       '8 - 3 * 2;': '(8.0 - (3.0 * 2.0));',
       '(8 - 3) * 2;': '((8.0 - 3.0) * 2.0);',
       '5 + 4 > 4;': '((5.0 + 4.0) > 4.0);',

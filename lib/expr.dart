@@ -5,6 +5,24 @@ abstract class Expr {
   T accept<T>(Visitor<T> visitor);
 }
 
+class AssignExpr extends Expr {
+  final Token name;
+  final Expr value;
+
+  AssignExpr({required this.name, required this.value});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitAssign(this);
+}
+
+class ParenExpr extends Expr {
+  final Expr expr;
+  ParenExpr({required this.expr});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitParen(this);
+}
+
 class BinaryExpr extends Expr {
   final Expr left;
   final Token operator;

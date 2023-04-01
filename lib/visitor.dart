@@ -16,6 +16,10 @@ abstract class Visitor<T> {
   T visitVariableDeclaration(VariableDeclaration declaration);
 
   T visitVariable(VariableExpr variable);
+
+  T visitAssign(AssignExpr assign);
+
+  T visitParen(ParenExpr paren);
 }
 
 class PrintVisitor extends Visitor<String> {
@@ -44,12 +48,26 @@ class PrintVisitor extends Visitor<String> {
 
   @override
   String visitVariableDeclaration(VariableDeclaration declaration) {
-    if (declaration.expr != null) {
-      return 'var ${declaration.identifier} = ${declaration.expr};';
+    final expr = declaration.expr;
+    if (expr != null) {
+      return 'var ${declaration.identifier} = ${expr.accept(this)};';
     }
     return 'var ${declaration.identifier}';
   }
 
   @override
   String visitVariable(VariableExpr variable) => '${variable.name}';
+
+  @override
+  String visitAssign(AssignExpr assign) =>
+      '${assign.name} = ${assign.value.accept(this)}';
+
+  @override
+  String visitParen(ParenExpr paren) {
+    final expr = paren.expr;
+    if (expr is BinaryExpr) {
+      return paren.expr.accept(this);
+    }
+    return '(${paren.expr.accept(this)})';
+  }
 }

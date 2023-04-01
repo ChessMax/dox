@@ -74,7 +74,12 @@ abstract class Dox {
           continue;
         }
       } catch (e) {
-        print('Unexpected error: $e');
+        final error = '$e';
+        if (error.startsWith('Runtime error')) {
+          print(error);
+        } else {
+          print('Unexpected error: $e');
+        }
       }
     }
   }

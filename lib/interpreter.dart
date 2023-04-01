@@ -34,42 +34,44 @@ class Interpreter extends Visitor<Object?> {
     switch (expr.operator.type) {
       case TokenType.minus:
         if (left is! double || right is! double) {
-          throw 'Expected double but got: $left, right';
+          throw 'Expected double but got: $left, $right';
         }
         return left - right;
       case TokenType.plus:
-        if (left is! double || right is! double) {
-          throw 'Expected double but got: $left, right';
+        if (left is double && right is double) {
+          return left + right;
+        } else if (left is String && right is String) {
+          return left + right;
         }
-        return left + right;
+        throw 'Expected double or String but got: $left, $right';
       case TokenType.slash:
         if (left is! double || right is! double) {
-          throw 'Expected double but got: $left, right';
+          throw 'Expected double but got: $left, $right';
         }
         return left / right;
       case TokenType.star:
         if (left is! double || right is! double) {
-          throw 'Expected double but got: $left, right';
+          throw 'Expected double but got: $left, $right';
         }
         return left * right;
       case TokenType.less:
         if (left is! double || right is! double) {
-          throw 'Expected double but got: $left, right';
+          throw 'Expected double but got: $left, $right';
         }
         return left < right;
       case TokenType.lessOrEqual:
         if (left is! double || right is! double) {
-          throw 'Expected double but got: $left, right';
+          throw 'Expected double but got: $left, $right';
         }
         return left <= right;
       case TokenType.greater:
         if (left is! double || right is! double) {
-          throw 'Expected double but got: $left, right';
+          throw 'Expected double but got: $left, $right';
         }
         return left > right;
       case TokenType.greaterOrEqual:
         if (left is! double || right is! double) {
-          throw 'Expected double but got: $left, right';
+          throw 'Expected double but got: $left, $right';
         }
         return left >= right;
       case TokenType.equalEqual:
@@ -191,9 +193,25 @@ class Interpreter extends Visitor<Object?> {
 
   @override
   Object? visitVariable(VariableExpr variable) {
-    final value = environment[variable.name.value];
-    return value;
+    final name = variable.name.value as String;
+    if (environment.containsKey(name)) {
+      return environment[name];
+    }
+    throw 'Runtime error: undefined variable "$name".';
   }
 
-  Object? readVariable(String name) => environment[name];
+  @override
+  Object? visitAssign(AssignExpr assign) {
+    final name = assign.name.value as String;
+    if (environment.containsKey(name)) {
+      final value = evaluate(assign.value);
+      environment[name] = value;
+      return value;
+    } else {
+      throw 'Runtime error: undefined variable "$name".';
+    }
+  }
+
+  @override
+  Object? visitParen(ParenExpr paren) => evaluate(paren.expr);
 }

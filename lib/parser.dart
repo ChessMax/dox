@@ -1,3 +1,4 @@
+import 'package:dox/dox.dart';
 import 'package:dox/expr.dart';
 import 'package:dox/token.dart';
 import 'package:dox/token_type.dart';
@@ -85,7 +86,20 @@ class Parser {
   }
 
   Expr parseExpression() {
-    Expr expr = parseEquality();
+    Expr expr = parseAssignment();
+    return expr;
+  }
+
+  Expr parseAssignment() {
+    final expr = parseEquality();
+
+    if (tryConsumeToken(TokenType.equal)) {
+      final value = parseAssignment();
+      if (expr is VariableExpr) {
+        return AssignExpr(name: expr.name, value: value);
+      }
+      Dox.error(-1, 'Invalid assignment target.');
+    }
     return expr;
   }
 
@@ -212,7 +226,7 @@ class Parser {
     }
 
     consume();
-    return expr;
+    return ParenExpr(expr: expr);
   }
 
   Token? tryPeekUnaryOperator() {
