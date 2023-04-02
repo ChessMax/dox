@@ -29,6 +29,8 @@ abstract class Visitor<T> {
   T visitLogic(LogicExpr logic);
 
   T visitWhile(While statement);
+
+  T visitFor(For statement);
 }
 
 class PrintVisitor extends Visitor<String> {
@@ -110,6 +112,23 @@ class PrintVisitor extends Visitor<String> {
   String visitWhile(While statement) {
     StringBuffer buffer = StringBuffer('while (');
     buffer.write(statement.expr.accept(this));
+    buffer.writeln(') {');
+    buffer.writeln(statement.body.accept(this));
+    buffer.write('}');
+    return buffer.toString();
+  }
+
+  @override
+  String visitFor(For statement) {
+    final initializer = statement.initializer;
+    final expr = statement.condition;
+    final increment = statement.increment;
+    StringBuffer buffer = StringBuffer('for (');
+    if (initializer != null) buffer.write(initializer.accept(this));
+    buffer.write(';');
+    if (expr != null) buffer.write(expr.accept(this));
+    buffer.write(';');
+    if (increment != null) buffer.write(increment.accept(this));
     buffer.writeln(') {');
     buffer.writeln(statement.body.accept(this));
     buffer.write('}');

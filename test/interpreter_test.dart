@@ -156,6 +156,21 @@ void main() {
        }
        print a;
        ''': '11',
+      '''
+       var a = 0;
+       for (var i = 0; i < 10; i = i + 1) {
+        a = a + 2;
+       }
+       print a;
+       ''': '20',
+      '''
+       var a = 0;
+       var i;
+       for (i = 0; i < 10; i = i + 1) {
+        a = a + 2;
+       }
+       print a;
+       ''': '20',
     };
 
     for (final kv in inputs.entries) {

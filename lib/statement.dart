@@ -64,6 +64,23 @@ class While extends Statement {
   T accept<T>(Visitor<T> visitor) => visitor.visitWhile(this);
 }
 
+class For extends Statement {
+  final Statement? initializer;
+  final Expr? condition;
+  final Expr? increment;
+  final Statement body;
+
+  For({
+    required this.initializer,
+    required this.condition,
+    required this.increment,
+    required this.body,
+  });
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitFor(this);
+}
+
 class Program extends Statement {
   final List<Statement> statements;
 

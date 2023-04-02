@@ -254,4 +254,24 @@ class Interpreter extends Visitor<Object?> {
     }
     return null;
   }
+
+  @override
+  Object? visitFor(For statement) {
+    final initializer = statement.initializer;
+    final expr = statement.condition;
+    final increment = statement.increment;
+    final body = statement.body;
+    final oldEnvironment = environment;
+    environment = Environment(parent: environment);
+    try {
+      if (initializer != null) execute(initializer);
+      while (expr == null || isTruthy(evaluate(expr))) {
+        execute(body);
+        if (increment != null) evaluate(increment);
+      }
+    } finally {
+      environment = oldEnvironment;
+    }
+    return null;
+  }
 }

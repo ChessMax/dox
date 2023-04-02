@@ -104,12 +104,54 @@ class Parser {
     return While(expr: expr, body: body);
   }
 
+  Statement parseFor() {
+    Expr? condition;
+    Expr? increment;
+    Statement? initializer;
+
+    consumeToken(TokenType.leftParen);
+
+    if (tryConsumeToken(TokenType.semicolon)) {
+      initializer = null;
+    } else if (tryConsumeToken(TokenType.varT)) {
+      initializer = parseVariableStatement();
+    } else {
+      initializer = parseExpressionStatement();
+    }
+
+    if (tryConsumeToken(TokenType.semicolon)) {
+      condition = null;
+    } else {
+      condition = parseExpression();
+      consumeToken(TokenType.semicolon);
+    }
+
+    if (tryConsumeToken(TokenType.rightParen)) {
+      increment = null;
+    } else {
+      increment = parseExpression();
+      consumeToken(TokenType.rightParen);
+    }
+
+    final body = parseStatement();
+
+    return For(
+      initializer: initializer,
+      condition: condition,
+      increment: increment,
+      body: body,
+    );
+  }
+
   Statement parseStatement() {
     if (tryConsumeToken(TokenType.varT)) {
       return parseVariableStatement();
     }
     if (tryConsumeToken(TokenType.leftBrace)) {
       return parseBlock();
+    }
+    if (tryConsumeToken(TokenType.forT)) {
+      return parseFor();
     }
     if (tryConsumeToken(TokenType.ifT)) {
       return parseCondition();
