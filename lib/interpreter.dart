@@ -230,4 +230,20 @@ class Interpreter extends Visitor<Object?> {
 
     return null;
   }
+
+  @override
+  Object? visitLogic(LogicExpr logic) {
+    final value = evaluate(logic.left);
+
+    if (logic.operator.type == TokenType.or) {
+      if (isTruthy(value)) return value;
+    } else if (!isTruthy(value)) {
+      return value;
+    }
+    return evaluate(logic.right);
+  }
+
+  bool isTruthy(Object? value) {
+    return value == true;
+  }
 }

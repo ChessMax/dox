@@ -11,17 +11,28 @@ void main() {
 
   test('Should parse expressions', () {
     final inputs = <String, Object?>{
-      '(2 + 3);': 5.0,
-      '-5 * (-1);': 5.0,
-      '!true;': false,
-      '!!!!(true);': true,
-      '8 - 3 * 2;': 2.0,
-      '(8 - 3) * 2;': 10.0,
-      '5 + 4 > 4;': true,
-      '8 * 2 == 4 + 4 + 4 + 4;': true,
-      '6 / 3 != 2;': false,
-      '(5 - (3 - 1)) + -1;': 2.0,
-      '"hello " + "world";': 'hello world'
+      '(2 + 3)': 5.0,
+      '-5 * (-1)': 5.0,
+      '!true': false,
+      '!!!!(true)': true,
+      '8 - 3 * 2': 2.0,
+      '(8 - 3) * 2': 10.0,
+      '5 + 4 > 4': true,
+      '8 * 2 == 4 + 4 + 4 + 4': true,
+      '6 / 3 != 2': false,
+      '(5 - (3 - 1)) + -1': 2.0,
+      '"hello " + "world"': 'hello world',
+      'true and true': true,
+      'true and false': false,
+      'false and true': false,
+      'true or false': true,
+      'true or true': true,
+      'false or true': true,
+      'false or false': false,
+      '5 > 6 or 6 > 4': true,
+      '5 > 0 and 6 < 4 or true != false': true,
+      'true or a > 4': true,
+      'false and a > 4': false,
     };
 
     for (final kv in inputs.entries) {

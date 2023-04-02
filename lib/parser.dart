@@ -118,7 +118,7 @@ class Parser {
   }
 
   Expr parseAssignment() {
-    final expr = parseEquality();
+    final expr = parseOr();
 
     if (tryConsumeToken(TokenType.equal)) {
       final value = parseAssignment();
@@ -127,6 +127,34 @@ class Parser {
       }
       Dox.error(-1, 'Invalid assignment target.');
     }
+    return expr;
+  }
+
+  Expr parseOr() {
+    Expr expr = parseAnd();
+
+    Token? token = peek;
+    while (token != null && token.type == TokenType.or) {
+      consume();
+      final right = parseAnd();
+      expr = LogicExpr(left: expr, operator: token, right: right);
+      token = peek;
+    }
+
+    return expr;
+  }
+
+  Expr parseAnd() {
+    Expr expr = parseEquality();
+
+    Token? token = peek;
+    while (token != null && token.type == TokenType.and) {
+      consume();
+      final right = parseEquality();
+      expr = LogicExpr(left: expr, operator: token, right: right);
+      token = peek;
+    }
+
     return expr;
   }
 
@@ -163,34 +191,6 @@ class Parser {
 
     return expr;
   }
-
-  // Expr parseOr() {
-  //   Expr expr = parseAnd();
-  //
-  //   Token? token = peek;
-  //   while (token != null && token.type == TokenType.or) {
-  //     consume();
-  //     final right = parseAnd();
-  //     expr = BinaryExpr(left: expr, operator: token, right: right);
-  //     token = peek;
-  //   }
-  //
-  //   return expr;
-  // }
-
-  // Expr parseAnd() {
-  //   Expr expr = parseTerm();
-  //
-  //   Token? token = peek;
-  //   while (token != null && token.type == TokenType.and) {
-  //     consume();
-  //     final right = parseTerm();
-  //     expr = BinaryExpr(left: expr, operator: token, right: right);
-  //     token = peek;
-  //   }
-  //
-  //   return expr;
-  // }
 
   Expr parseTerm() {
     Expr expr = parseFactor();

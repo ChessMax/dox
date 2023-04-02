@@ -25,12 +25,17 @@ abstract class Visitor<T> {
   T visitBlock(Block block);
 
   T visitCondition(Condition condition);
+
+  T visitLogic(LogicExpr logic);
 }
 
 class PrintVisitor extends Visitor<String> {
   @override
   String visitBinary(BinaryExpr expr) =>
       '(${expr.left.accept(this)} ${expr.operator} ${expr.right.accept(this)})';
+
+  @override
+  String visitLogic(LogicExpr logic) => visitBinary(logic);
 
   @override
   String visitLiteral(LiteralExpr expr) => expr.value.toString();

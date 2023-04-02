@@ -38,6 +38,17 @@ class BinaryExpr extends Expr {
   T accept<T>(Visitor<T> visitor) => visitor.visitBinary(this);
 }
 
+class LogicExpr extends BinaryExpr {
+  LogicExpr({
+    required super.left,
+    required super.operator,
+    required super.right,
+  });
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitLogic(this);
+}
+
 class UnaryExpr extends Expr {
   final Token operator;
   final Expr expr;
