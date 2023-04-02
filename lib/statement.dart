@@ -42,6 +42,17 @@ class Block extends Statement {
   T accept<T>(Visitor<T> visitor) => visitor.visitBlock(this);
 }
 
+class Condition extends Statement {
+  final Expr expr;
+  final Statement than;
+  final Statement? elseStatement;
+
+  Condition({required this.expr, required this.than, this.elseStatement});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitCondition(this);
+}
+
 class Program extends Statement {
   final List<Statement> statements;
 

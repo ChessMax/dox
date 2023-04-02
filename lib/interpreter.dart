@@ -215,4 +215,19 @@ class Interpreter extends Visitor<Object?> {
 
     return null;
   }
+
+  @override
+  Object? visitCondition(Condition condition) {
+    final value = evaluate(condition.expr);
+    if (value == true) {
+      execute(condition.than);
+    } else {
+      final elseStatement = condition.elseStatement;
+      if (elseStatement != null) {
+        execute(elseStatement);
+      }
+    }
+
+    return null;
+  }
 }

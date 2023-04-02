@@ -85,12 +85,26 @@ class Parser {
     return Block(statements: statements);
   }
 
+  Statement parseCondition() {
+    consumeToken(TokenType.leftParen);
+    final expr = parseExpression();
+    consumeToken(TokenType.rightParen);
+    final than = parseStatement();
+    final elseStatement =
+        tryConsumeToken(TokenType.elseT) ? parseStatement() : null;
+
+    return Condition(expr: expr, than: than, elseStatement: elseStatement);
+  }
+
   Statement parseStatement() {
     if (tryConsumeToken(TokenType.varT)) {
       return parseVariableStatement();
     }
     if (tryConsumeToken(TokenType.leftBrace)) {
       return parseBlock();
+    }
+    if (tryConsumeToken(TokenType.ifT)) {
+      return parseCondition();
     }
     if (tryConsumeToken(TokenType.print)) {
       return parsePrintStatement();

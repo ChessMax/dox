@@ -23,6 +23,8 @@ abstract class Visitor<T> {
   T visitParen(ParenExpr paren);
 
   T visitBlock(Block block);
+
+  T visitCondition(Condition condition);
 }
 
 class PrintVisitor extends Visitor<String> {
@@ -76,9 +78,24 @@ class PrintVisitor extends Visitor<String> {
 
   @override
   String visitBlock(Block block) {
-    StringBuffer buffer = StringBuffer("{\n");
+    StringBuffer buffer = StringBuffer('{\n');
     buffer.writeAll(block.statements.map<String>((e) => e.accept(this)), '\n');
     buffer.write('\n}');
+    return buffer.toString();
+  }
+
+  @override
+  String visitCondition(Condition condition) {
+    StringBuffer buffer = StringBuffer('if (${condition.expr.accept(this)}');
+    buffer.writeln('\n{');
+    buffer.writeln(condition.than.accept(this));
+    buffer.writeln('\n}');
+    final elseStatement = condition.elseStatement;
+    if (elseStatement != null) {
+      buffer.writeln(' else {');
+      buffer.writeln(elseStatement.accept(this));
+      buffer.writeln('}');
+    }
     return buffer.toString();
   }
 }

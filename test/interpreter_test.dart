@@ -101,6 +101,42 @@ void main() {
     }
   });
 
+  test('Should execute conditions', () {
+    final inputs = <String, Object?>{
+      '''var a = 5;
+       if (a == 5) {
+        print true;
+       }
+       else print false;
+       ''': 'true',
+      '''var a = 6;
+       if (a == 5) {
+        print true;
+       }
+       else print false;
+       ''': 'false',
+      '''var a = 6;
+       if (true) 
+        if (false) print true;
+        else print false;
+       ''': 'false',
+    };
+
+    for (final kv in inputs.entries) {
+      output.clear();
+
+      final input = kv.key;
+      final expected = kv.value;
+
+      final tokens = Lexer.enumerate(input);
+      final parser = Parser(tokens: tokens.toList());
+      final statement = parser.parse();
+      interpreter.execute(statement);
+
+      expect(output.output, expected, reason: input);
+    }
+  });
+
   test('Should initialize variables', () {
     final inputs = <String, Object?>{
       'var name;': '',
