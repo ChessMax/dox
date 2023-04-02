@@ -13,7 +13,7 @@ class Environment {
     }
     final parent = this.parent;
     if (parent != null) {
-      setValue(name, value);
+      parent.setValue(name, value);
     } else {
       throw 'Runtime error: undefined variable "$name".';
     }
