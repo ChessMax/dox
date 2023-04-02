@@ -96,6 +96,14 @@ class Parser {
     return Condition(expr: expr, than: than, elseStatement: elseStatement);
   }
 
+  Statement parseWhile() {
+    consumeToken(TokenType.leftParen);
+    final expr = parseExpression();
+    consumeToken(TokenType.rightParen);
+    final body = parseStatement();
+    return While(expr: expr, body: body);
+  }
+
   Statement parseStatement() {
     if (tryConsumeToken(TokenType.varT)) {
       return parseVariableStatement();
@@ -105,6 +113,9 @@ class Parser {
     }
     if (tryConsumeToken(TokenType.ifT)) {
       return parseCondition();
+    }
+    if (tryConsumeToken(TokenType.whileT)) {
+      return parseWhile();
     }
     if (tryConsumeToken(TokenType.print)) {
       return parsePrintStatement();

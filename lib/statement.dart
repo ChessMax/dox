@@ -36,6 +36,7 @@ class PrintStatement extends Statement {
 
 class Block extends Statement {
   final List<Statement> statements;
+
   Block({required this.statements});
 
   @override
@@ -51,6 +52,16 @@ class Condition extends Statement {
 
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitCondition(this);
+}
+
+class While extends Statement {
+  final Expr expr;
+  final Statement body;
+
+  While({required this.expr, required this.body});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitWhile(this);
 }
 
 class Program extends Statement {

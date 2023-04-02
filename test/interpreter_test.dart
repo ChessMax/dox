@@ -148,6 +148,31 @@ void main() {
     }
   });
 
+  test('Should execute loops', () {
+    final inputs = <String, Object?>{
+      '''var a = 5;
+       while (a < 10) {
+        a = a + 2;
+       }
+       print a;
+       ''': '11',
+    };
+
+    for (final kv in inputs.entries) {
+      output.clear();
+
+      final input = kv.key;
+      final expected = kv.value;
+
+      final tokens = Lexer.enumerate(input);
+      final parser = Parser(tokens: tokens.toList());
+      final statement = parser.parse();
+      interpreter.execute(statement);
+
+      expect(output.output, expected, reason: input);
+    }
+  });
+
   test('Should initialize variables', () {
     final inputs = <String, Object?>{
       'var name;': '',

@@ -246,4 +246,12 @@ class Interpreter extends Visitor<Object?> {
   bool isTruthy(Object? value) {
     return value == true;
   }
+
+  @override
+  Object? visitWhile(While statement) {
+    while (isTruthy(evaluate(statement.expr))) {
+      execute(statement.body);
+    }
+    return null;
+  }
 }

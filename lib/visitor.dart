@@ -27,6 +27,8 @@ abstract class Visitor<T> {
   T visitCondition(Condition condition);
 
   T visitLogic(LogicExpr logic);
+
+  T visitWhile(While statement);
 }
 
 class PrintVisitor extends Visitor<String> {
@@ -101,6 +103,16 @@ class PrintVisitor extends Visitor<String> {
       buffer.writeln(elseStatement.accept(this));
       buffer.writeln('}');
     }
+    return buffer.toString();
+  }
+
+  @override
+  String visitWhile(While statement) {
+    StringBuffer buffer = StringBuffer('while (');
+    buffer.write(statement.expr.accept(this));
+    buffer.writeln(') {');
+    buffer.writeln(statement.body.accept(this));
+    buffer.write('}');
     return buffer.toString();
   }
 }
