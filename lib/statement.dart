@@ -25,6 +25,21 @@ class VariableDeclaration extends Statement {
   T accept<T>(Visitor<T> visitor) => visitor.visitVariableDeclaration(this);
 }
 
+class FuncDeclaration extends Statement {
+  final Token name;
+  final List<Token> params;
+  final List<Statement> body;
+
+  FuncDeclaration({
+    required this.name,
+    required this.params,
+    required this.body,
+  });
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitFuncDeclaration(this);
+}
+
 class PrintStatement extends Statement {
   final Expr expr;
 

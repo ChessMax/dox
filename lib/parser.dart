@@ -64,7 +64,7 @@ class Parser {
     return ExprStatement(expr: expr);
   }
 
-  Statement parseVariableStatement() {
+  Statement parseVarDeclaration() {
     Expr? expr;
     final identifier = consumeToken(TokenType.identifier);
     if (tryConsumeToken(TokenType.equal)) {
@@ -76,7 +76,7 @@ class Parser {
     return VariableDeclaration(identifier: identifier, expr: expr);
   }
 
-  Statement parseBlock() {
+  Block parseBlock() {
     final statements = <Statement>[];
     while (!isAtEnd && peek?.type != TokenType.rightBrace) {
       statements.add(parseStatement());
@@ -114,7 +114,7 @@ class Parser {
     if (tryConsumeToken(TokenType.semicolon)) {
       initializer = null;
     } else if (tryConsumeToken(TokenType.varT)) {
-      initializer = parseVariableStatement();
+      initializer = parseVarDeclaration();
     } else {
       initializer = parseExpressionStatement();
     }
@@ -143,9 +143,34 @@ class Parser {
     );
   }
 
+  Statement parseFuncDeclaration() {
+    final name = consumeToken(TokenType.identifier);
+    final params = <Token>[];
+    consumeToken(TokenType.leftParen);
+    while (peek?.type != TokenType.rightParen) {
+      final param = consumeToken(TokenType.identifier);
+
+      if (params.length >= 255) {
+        Dox.error(-1, 'Can not have more than 255 parameters');
+      }
+
+      params.add(param);
+      if (!tryConsumeToken(TokenType.comma)) {
+        break;
+      }
+    }
+    consumeToken(TokenType.rightParen);
+    consumeToken(TokenType.leftBrace);
+    final body = parseBlock().statements;
+    return FuncDeclaration(name: name, params: params, body: body);
+  }
+
   Statement parseStatement() {
+    if (tryConsumeToken(TokenType.fun)) {
+      return parseFuncDeclaration();
+    }
     if (tryConsumeToken(TokenType.varT)) {
-      return parseVariableStatement();
+      return parseVarDeclaration();
     }
     if (tryConsumeToken(TokenType.leftBrace)) {
       return parseBlock();
@@ -282,7 +307,37 @@ class Parser {
       return UnaryExpr(operator: operator, expr: expr);
     }
 
-    return parsePrimary();
+    return parseCall();
+  }
+
+  Expr parseCall() {
+    Expr expr = parsePrimary();
+    while (true) {
+      if (tryConsumeToken(TokenType.leftParen)) {
+        expr = parseCallArguments(expr);
+      } else {
+        break;
+      }
+    }
+    return expr;
+  }
+
+  Expr parseCallArguments(Expr callee) {
+    final arguments = <Expr>[];
+    final token = peek;
+    if (token?.type != TokenType.rightParen) {
+      do {
+        final argument = parseExpression();
+        if (arguments.length >= 255) {
+          Dox.error(-1, 'Can not have more than 255 arguments.');
+        }
+        arguments.add(argument);
+      } while (peek?.type == TokenType.comma);
+    }
+
+    consumeToken(TokenType.rightParen);
+
+    return CallExpr(callee: callee, arguments: arguments);
   }
 
   Expr parsePrimary() {

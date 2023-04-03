@@ -5,6 +5,16 @@ abstract class Expr {
   T accept<T>(Visitor<T> visitor);
 }
 
+class CallExpr extends Expr {
+  final Expr callee;
+  final List<Expr> arguments;
+
+  CallExpr({required this.callee, required this.arguments});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitCall(this);
+}
+
 class AssignExpr extends Expr {
   final Token name;
   final Expr value;

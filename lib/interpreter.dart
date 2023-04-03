@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dox/callable.dart';
 import 'package:dox/environment.dart';
 import 'package:dox/expr.dart';
 import 'package:dox/output.dart';
@@ -8,11 +11,26 @@ import 'package:dox/visitor.dart';
 
 class Interpreter extends Visitor<Object?> {
   final Output _output;
-  Environment environment = Environment();
+  final globals = Environment();
+  late Environment environment = globals;
 
-  Interpreter([this._output = const StandardOutput()]);
+  Interpreter([this._output = const StandardOutput()]) {
+    globals.define('clock', ClockFunc());
+    globals.define('readLine', ReadLineFunc());
+  }
 
   void execute(Statement statement) => statement.accept(this);
+
+  void executeBlock(List<Statement> block, Environment environment) {
+    final oldEnvironment = this.environment;
+
+    try {
+      environment = Environment(parent: environment);
+      block.forEach(execute);
+    } finally {
+      environment = oldEnvironment;
+    }
+  }
 
   Object? evaluate(Expr expr) => expr.accept(this);
 
@@ -204,15 +222,7 @@ class Interpreter extends Visitor<Object?> {
 
   @override
   Object? visitBlock(Block block) {
-    final oldEnvironment = environment;
-
-    try {
-      environment = Environment(parent: environment);
-      block.statements.forEach(execute);
-    } finally {
-      environment = oldEnvironment;
-    }
-
+    executeBlock(block.statements, Environment(parent: environment));
     return null;
   }
 
@@ -273,5 +283,82 @@ class Interpreter extends Visitor<Object?> {
       environment = oldEnvironment;
     }
     return null;
+  }
+
+  @override
+  Object? visitCall(CallExpr call) {
+    final callee = evaluate(call.callee);
+
+    if (callee is! Callable) {
+      throw 'Runtime error: expected function or class';
+    }
+
+    final arguments = [
+      for (final argument in call.arguments) evaluate(argument),
+    ];
+
+    if (arguments.length != callee.arity) {
+      throw 'Runtime error: Expected ${callee.arity} arguments but got ${arguments.length}.';
+    }
+
+    return callee.invoke(this, arguments);
+  }
+
+  @override
+  Object? visitFuncDeclaration(FuncDeclaration func) {
+    final name = func.name.toString();
+    environment.define(name, func);
+    return null;
+  }
+}
+
+class Func extends Callable {
+  final FuncDeclaration func;
+
+  Func({required this.func});
+
+  @override
+  int get arity => func.params.length;
+
+  @override
+  Object? invoke(Interpreter interpreter, List<Object?> arguments) {
+    Environment environment = Environment(parent: interpreter.globals);
+    for (int i = 0; i < func.params.length; ++i) {
+      final param = func.params[i].toString();
+      final value = arguments[i];
+      environment.define(param, value);
+    }
+
+    interpreter.executeBlock(func.body, environment);
+
+    return null;
+  }
+
+  @override
+  String toString() => '<fn ${func.name}>';
+}
+
+abstract class NativeFunc extends Callable {
+  @override
+  String toString() => '<native fn>';
+}
+
+class ClockFunc extends NativeFunc {
+  @override
+  int get arity => 0;
+
+  @override
+  Object? invoke(Interpreter interpreter, List<Object?> arguments) {
+    return DateTime.now().millisecondsSinceEpoch / 1000;
+  }
+}
+
+class ReadLineFunc extends NativeFunc {
+  @override
+  int get arity => 0;
+
+  @override
+  Object? invoke(Interpreter interpreter, List<Object?> arguments) {
+    return stdin.readLineSync();
   }
 }

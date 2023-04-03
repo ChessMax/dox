@@ -31,6 +31,10 @@ abstract class Visitor<T> {
   T visitWhile(While statement);
 
   T visitFor(For statement);
+
+  T visitCall(CallExpr call);
+
+  T visitFuncDeclaration(FuncDeclaration func);
 }
 
 class PrintVisitor extends Visitor<String> {
@@ -132,6 +136,24 @@ class PrintVisitor extends Visitor<String> {
     buffer.writeln(') {');
     buffer.writeln(statement.body.accept(this));
     buffer.write('}');
+    return buffer.toString();
+  }
+
+  @override
+  String visitCall(CallExpr call) {
+    return '${call.callee.accept(this)}(${call.arguments.map((e) => e.accept(this)).join(', ')});';
+  }
+
+  @override
+  String visitFuncDeclaration(FuncDeclaration func) {
+    final buffer = StringBuffer('fun ');
+    buffer.write(func.name);
+    buffer.write('(');
+    buffer.writeAll(func.params, ', ');
+    buffer.writeln(') {');
+    buffer.writeAll(func.body.map<String>((e) => e.accept(this)), '\n');
+    buffer.write('}');
+
     return buffer.toString();
   }
 }
