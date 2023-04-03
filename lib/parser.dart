@@ -332,7 +332,7 @@ class Parser {
           Dox.error(-1, 'Can not have more than 255 arguments.');
         }
         arguments.add(argument);
-      } while (peek?.type == TokenType.comma);
+      } while (tryConsumeToken(TokenType.comma));
     }
 
     consumeToken(TokenType.rightParen);
