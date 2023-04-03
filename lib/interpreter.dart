@@ -25,10 +25,10 @@ class Interpreter extends Visitor<Object?> {
     final oldEnvironment = this.environment;
 
     try {
-      environment = Environment(parent: environment);
+      this.environment = Environment(parent: environment);
       block.forEach(execute);
     } finally {
-      environment = oldEnvironment;
+      this.environment = oldEnvironment;
     }
   }
 
