@@ -307,7 +307,7 @@ class Interpreter extends Visitor<Object?> {
   @override
   Object? visitFuncDeclaration(FuncDeclaration func) {
     final name = func.name.toString();
-    environment.define(name, func);
+    environment.define(name, Func(func: func));
     return null;
   }
 }
