@@ -4,6 +4,7 @@ import 'package:dox/callable.dart';
 import 'package:dox/environment.dart';
 import 'package:dox/expr.dart';
 import 'package:dox/output.dart';
+import 'package:dox/runtime_error.dart';
 import 'package:dox/statement.dart';
 import 'package:dox/stringify.dart';
 import 'package:dox/token_type.dart';
@@ -301,7 +302,11 @@ class Interpreter extends Visitor<Object?> {
       throw 'Runtime error: Expected ${callee.arity} arguments but got ${arguments.length}.';
     }
 
-    return callee.invoke(this, arguments);
+    try {
+      return callee.invoke(this, arguments);
+    } on ReturnError catch (e) {
+      return e.value;
+    }
   }
 
   @override
@@ -309,6 +314,13 @@ class Interpreter extends Visitor<Object?> {
     final name = func.name.toString();
     environment.define(name, Func(func: func));
     return null;
+  }
+
+  @override
+  Object? visitReturn(Return statement) {
+    final expr = statement.expr;
+    final value = expr != null ? evaluate(expr) : null;
+    throw ReturnError(value: value);
   }
 }
 

@@ -165,7 +165,20 @@ class Parser {
     return FuncDeclaration(name: name, params: params, body: body);
   }
 
+  Statement parseReturn() {
+    Expr? expr;
+    if (!tryConsumeToken(TokenType.semicolon)) {
+      expr = parseExpression();
+      consumeToken(TokenType.semicolon);
+    }
+
+    return Return(expr: expr);
+  }
+
   Statement parseStatement() {
+    if (tryConsumeToken(TokenType.returnT)) {
+      return parseReturn();
+    }
     if (tryConsumeToken(TokenType.fun)) {
       return parseFuncDeclaration();
     }

@@ -35,6 +35,8 @@ abstract class Visitor<T> {
   T visitCall(CallExpr call);
 
   T visitFuncDeclaration(FuncDeclaration func);
+
+  T visitReturn(Return statement);
 }
 
 class PrintVisitor extends Visitor<String> {
@@ -155,5 +157,12 @@ class PrintVisitor extends Visitor<String> {
     buffer.write('}');
 
     return buffer.toString();
+  }
+
+  @override
+  String visitReturn(Return statement) {
+    final expr = statement.expr;
+    if (expr != null) return 'return ${expr.accept(this)};';
+    return 'return;';
   }
 }

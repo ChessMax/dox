@@ -96,6 +96,15 @@ class For extends Statement {
   T accept<T>(Visitor<T> visitor) => visitor.visitFor(this);
 }
 
+class Return extends Statement {
+  final Expr? expr;
+
+  Return({required this.expr});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitReturn(this);
+}
+
 class Program extends Statement {
   final List<Statement> statements;
 

@@ -188,6 +188,52 @@ void main() {
     }
   });
 
+  test('Should define and evaluate functions', () {
+    final inputs = <String, Object?>{
+      '''fun add(a, b) {
+        return a + b;
+      }
+      print add(5, 6);
+      ''': '11',
+      '''fun add(a, b) {
+        if (a > b) return a;
+        return b;
+      }
+      print add(5, 6);
+      ''': '6',
+      // TODO: nice to be able to return value here
+      '''fun add2(a, b) {
+        return a + b;
+      }
+      add2(5, 6);
+      ''': '',
+      '''fun printMin(a, b) {
+        if (a < b) {
+          print a;
+          return;
+        }
+        print b;
+        return;
+      }
+      printMin(5, 6);
+      ''': '5',
+    };
+
+    for (final kv in inputs.entries) {
+      output.clear();
+
+      final input = kv.key;
+      final expected = kv.value;
+
+      final tokens = Lexer.enumerate(input);
+      final parser = Parser(tokens: tokens.toList());
+      final statement = parser.parse();
+      interpreter.execute(statement);
+
+      expect(output.output, expected, reason: input);
+    }
+  });
+
   test('Should initialize variables', () {
     final inputs = <String, Object?>{
       'var name;': '',
