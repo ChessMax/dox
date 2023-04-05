@@ -312,7 +312,7 @@ class Interpreter extends Visitor<Object?> {
   @override
   Object? visitFuncDeclaration(FuncDeclaration func) {
     final name = func.name.toString();
-    environment.define(name, Func(func: func));
+    environment.define(name, Func(environment: environment, func: func));
     return null;
   }
 
@@ -326,15 +326,16 @@ class Interpreter extends Visitor<Object?> {
 
 class Func extends Callable {
   final FuncDeclaration func;
+  final Environment environment;
 
-  Func({required this.func});
+  Func({required this.environment, required this.func});
 
   @override
   int get arity => func.params.length;
 
   @override
   Object? invoke(Interpreter interpreter, List<Object?> arguments) {
-    Environment environment = Environment(parent: interpreter.globals);
+    Environment environment = Environment(parent: this.environment);
     for (int i = 0; i < func.params.length; ++i) {
       final param = func.params[i].toString();
       final value = arguments[i];

@@ -234,6 +234,38 @@ void main() {
     }
   });
 
+  test('Closures should work', () {
+    final inputs = <String, Object?>{
+      '''fun makeCounter() {
+        var i = 0;
+        fun count() {
+          i = i + 1;
+          print i;
+        }
+        return count;
+      }
+      
+      var counter = makeCounter();
+      counter();
+      counter();
+      ''': '1\n2',
+    };
+
+    for (final kv in inputs.entries) {
+      output.clear();
+
+      final input = kv.key;
+      final expected = kv.value;
+
+      final tokens = Lexer.enumerate(input);
+      final parser = Parser(tokens: tokens.toList());
+      final statement = parser.parse();
+      interpreter.execute(statement);
+
+      expect(output.output, expected, reason: input);
+    }
+  });
+
   test('Should initialize variables', () {
     final inputs = <String, Object?>{
       'var name;': '',

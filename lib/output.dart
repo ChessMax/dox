@@ -19,7 +19,11 @@ class TestOutput extends Output {
 
   @override
   void print(Object? value) {
-    _output += value.toString();
+    if (_output.isNotEmpty) {
+      _output += '\n$value';
+    } else {
+      _output += '$value';
+    }
   }
 
   void clear() => _output = '';
