@@ -191,6 +191,8 @@ void main() {
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
       final statement = parser.parse();
+      final resolver = Resolver(interpreter: interpreter);
+      resolver.resolveStatement(statement);
       interpreter.execute(statement);
 
       expect(output.output, expected, reason: input);

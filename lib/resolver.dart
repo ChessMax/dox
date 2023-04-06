@@ -130,6 +130,7 @@ class Resolver implements Visitor<void> {
 
   @override
   void visitFor(For statement) {
+    beginScope();
     final initializer = statement.initializer;
     final condition = statement.condition;
     final increment = statement.increment;
@@ -137,6 +138,7 @@ class Resolver implements Visitor<void> {
     if (condition != null) resolveExpression(condition);
     if (increment != null) resolveExpression(increment);
     resolveStatement(statement.body);
+    endScope();
   }
 
   @override
