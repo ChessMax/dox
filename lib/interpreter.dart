@@ -7,6 +7,7 @@ import 'package:dox/output.dart';
 import 'package:dox/runtime_error.dart';
 import 'package:dox/statement.dart';
 import 'package:dox/stringify.dart';
+import 'package:dox/token.dart';
 import 'package:dox/token_type.dart';
 import 'package:dox/visitor.dart';
 
@@ -14,6 +15,7 @@ class Interpreter extends Visitor<Object?> {
   final Output _output;
   final globals = Environment();
   late Environment environment = globals;
+  final locals = <Expr, int>{};
 
   Interpreter([this._output = const StandardOutput()]) {
     globals.define('clock', ClockFunc());
@@ -204,17 +206,31 @@ class Interpreter extends Visitor<Object?> {
     return null;
   }
 
-  @override
-  Object? visitVariable(VariableExpr variable) {
-    final name = variable.name.value as String;
-    return environment.getValue(name);
+  Object? lookUpVariable(Token name, Expr expr) {
+    final distance = locals[expr];
+    if (distance != null) {
+      return environment.getAt(distance, name.toString());
+    } else {
+      return globals.getValue(name.toString());
+    }
   }
+
+  @override
+  Object? visitVariable(VariableExpr variable) =>
+      lookUpVariable(variable.name, variable);
 
   @override
   Object? visitAssign(AssignExpr assign) {
     final name = assign.name.value as String;
-    final value = evaluate(assign.value);
-    environment.setValue(name, value);
+    final expr = assign.value;
+    final value = evaluate(expr);
+    final distance = locals[expr];
+    if (distance != null) {
+      environment.assignAt(distance, assign.name, value);
+    } else {
+      globals.setValue(name, value);
+    }
+
     return value;
   }
 
@@ -322,6 +338,8 @@ class Interpreter extends Visitor<Object?> {
     final value = expr != null ? evaluate(expr) : null;
     throw ReturnError(value: value);
   }
+
+  void resolve(Expr expr, int depth) => locals[expr] = depth;
 }
 
 class Func extends Callable {

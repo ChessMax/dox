@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dox/interpreter.dart';
 import 'package:dox/lexer.dart';
 import 'package:dox/parser.dart';
+import 'package:dox/resolver.dart';
 import 'package:dox/statement.dart';
 import 'package:dox/token.dart';
 
@@ -41,11 +42,14 @@ abstract class Dox {
       final interpreter = Interpreter();
       final tokens = Lexer.enumerate(program);
       final parser = Parser(tokens: tokens.toList());
-      final expr = parser.parse();
+      final statement = parser.parse();
 
       if (_hadError) exit(65);
 
-      interpreter.execute(expr);
+      final resolver = Resolver(interpreter: interpreter);
+      resolver.resolveStatement(statement);
+
+      interpreter.execute(statement);
     } catch (e) {
       print(e);
       exit(65);
@@ -79,6 +83,9 @@ abstract class Dox {
           print('Parsing error: ');
           continue;
         }
+
+        final resolver = Resolver(interpreter: interpreter);
+        resolver.resolveStatement(statement);
 
         interpreter.execute(statement);
 

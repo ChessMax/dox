@@ -1,3 +1,5 @@
+import 'package:dox/token.dart';
+
 class Environment {
   final Environment? parent;
   final _state = <String, Object?>{};
@@ -29,4 +31,18 @@ class Environment {
 
     throw 'Runtime error: undefined variable "$name".';
   }
+
+  Environment ancestor(int distance) {
+    Environment environment = this;
+    for (var i = 0; i < distance; ++i) {
+      environment = environment.parent!;
+    }
+
+    return environment;
+  }
+
+  Object? getAt(int distance, String name) => ancestor(distance).getValue(name);
+
+  void assignAt(int distance, Token name, Object? value) =>
+      ancestor(distance).setValue(name.toString(), value);
 }

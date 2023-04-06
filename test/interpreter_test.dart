@@ -2,6 +2,7 @@ import 'package:dox/interpreter.dart';
 import 'package:dox/lexer.dart';
 import 'package:dox/output.dart';
 import 'package:dox/parser.dart';
+import 'package:dox/resolver.dart';
 import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
@@ -44,6 +45,8 @@ void main() {
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
       final expr = parser.parseExpression();
+      final resolver = Resolver(interpreter: interpreter);
+      resolver.resolveExpression(expr);
       final actual = interpreter.evaluate(expr);
 
       expect(actual, expected, reason: input);
@@ -80,6 +83,8 @@ void main() {
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
       final statement = parser.parse();
+      final resolver = Resolver(interpreter: interpreter);
+      resolver.resolveStatement(statement);
       interpreter.execute(statement);
 
       expect(output.output, expected, reason: input);
@@ -106,6 +111,8 @@ void main() {
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
       final statement = parser.parse();
+      final resolver = Resolver(interpreter: interpreter);
+      resolver.resolveStatement(statement);
       interpreter.execute(statement);
 
       expect(output.output, expected, reason: input);
@@ -142,6 +149,8 @@ void main() {
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
       final statement = parser.parse();
+      final resolver = Resolver(interpreter: interpreter);
+      resolver.resolveStatement(statement);
       interpreter.execute(statement);
 
       expect(output.output, expected, reason: input);
@@ -228,6 +237,8 @@ void main() {
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
       final statement = parser.parse();
+      final resolver = Resolver(interpreter: interpreter);
+      resolver.resolveStatement(statement);
       interpreter.execute(statement);
 
       expect(output.output, expected, reason: input);
@@ -260,6 +271,8 @@ void main() {
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
       final statement = parser.parse();
+      final resolver = Resolver(interpreter: interpreter);
+      resolver.resolveStatement(statement);
       interpreter.execute(statement);
 
       expect(output.output, expected, reason: input);
@@ -286,6 +299,8 @@ void main() {
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
       final statement = parser.parse();
+      final resolver = Resolver(interpreter: interpreter);
+      resolver.resolveStatement(statement);
       interpreter.execute(statement);
 
       expect(output.output, expected, reason: input);
@@ -310,6 +325,8 @@ void main() {
       final tokens = Lexer.enumerate(input);
       final parser = Parser(tokens: tokens.toList());
       final statement = parser.parse();
+      final resolver = Resolver(interpreter: interpreter);
+      resolver.resolveStatement(statement);
       interpreter.execute(statement);
 
       expect(output.output, expected, reason: input);
