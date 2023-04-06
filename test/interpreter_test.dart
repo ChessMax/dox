@@ -260,6 +260,17 @@ void main() {
       counter();
       counter();
       ''': '1\n2',
+      '''
+      var a = "global";
+      {
+       fun showA() {
+       print a;
+       }
+       showA();
+       var a = "block";
+       showA();
+      }
+      ''': 'global\nglobal',
     };
 
     for (final kv in inputs.entries) {
