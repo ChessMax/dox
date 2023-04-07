@@ -49,6 +49,8 @@ abstract class Dox {
       final resolver = Resolver(interpreter: interpreter);
       resolver.resolveStatement(statement);
 
+      if (_hadError) exit(65);
+
       interpreter.execute(statement);
     } catch (e) {
       print(e);
@@ -86,6 +88,12 @@ abstract class Dox {
 
         final resolver = Resolver(interpreter: interpreter);
         resolver.resolveStatement(statement);
+
+        if (_hadError) {
+          _hadError = false;
+          print('Resolving error: ');
+          continue;
+        }
 
         interpreter.execute(statement);
 

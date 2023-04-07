@@ -1,0 +1,4 @@
+enum FunctionType {
+  none,
+  function,
+}

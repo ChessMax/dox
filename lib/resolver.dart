@@ -1,5 +1,6 @@
 import 'package:dox/dox.dart';
 import 'package:dox/expr.dart';
+import 'package:dox/function_type.dart';
 import 'package:dox/interpreter.dart';
 import 'package:dox/statement.dart';
 import 'package:dox/token.dart';
@@ -8,6 +9,7 @@ import 'package:dox/visitor.dart';
 class Resolver implements Visitor<void> {
   final Interpreter interpreter;
   final List<Map<String, bool>> scopes = [];
+  FunctionType currentFunction = FunctionType.none;
 
   Resolver({required this.interpreter});
 
@@ -37,6 +39,11 @@ class Resolver implements Visitor<void> {
   void declare(Token name) {
     if (scopes.isEmpty) return;
     final scope = peekScope;
+
+    if (scope.containsKey(name.toString())) {
+      Dox.error(-1, 'Already variable with this name in this scope.');
+    }
+
     scope[name.toString()] = false;
   }
 
@@ -80,7 +87,9 @@ class Resolver implements Visitor<void> {
     resolveLocal(expr, assign.name);
   }
 
-  void resolveFunction(FuncDeclaration func) {
+  void resolveFunction(FuncDeclaration func, FunctionType type) {
+    final enclosingFunction = currentFunction;
+    currentFunction = type;
     beginScope();
 
     for (final param in func.params) {
@@ -89,6 +98,7 @@ class Resolver implements Visitor<void> {
     }
     resolveStatements(func.body);
     endScope();
+    currentFunction = enclosingFunction;
   }
 
   @override
@@ -96,7 +106,7 @@ class Resolver implements Visitor<void> {
     declare(func.name);
     define(func.name);
 
-    resolveFunction(func);
+    resolveFunction(func, FunctionType.function);
   }
 
   @override
@@ -118,6 +128,9 @@ class Resolver implements Visitor<void> {
 
   @override
   void visitReturn(Return statement) {
+    if (currentFunction == FunctionType.none) {
+      Dox.error(-1, 'Can not return from top-level code.');
+    }
     final value = statement.expr;
     if (value != null) resolveExpression(value);
   }
