@@ -319,11 +319,7 @@ class Interpreter extends Visitor<Object?> {
       throw 'Runtime error: Expected ${callee.arity} arguments but got ${arguments.length}.';
     }
 
-    try {
-      return callee.invoke(this, arguments);
-    } on ReturnError catch (e) {
-      return e.value;
-    }
+    return callee.invoke(this, arguments);
   }
 
   @override
@@ -438,7 +434,13 @@ class Func extends Callable {
       environment.define(param, value);
     }
 
-    interpreter.executeBlock(func.body, environment);
+    try {
+      interpreter.executeBlock(func.body, environment);
+    } on ReturnError catch (returnValue) {
+      if (isInitializer) return environment.getAt(0, 'this');
+
+      return returnValue.value;
+    }
 
     if (isInitializer) return environment.getAt(0, 'this');
 

@@ -135,7 +135,12 @@ class Resolver implements Visitor<void> {
       Dox.error(-1, 'Can not return from top-level code.');
     }
     final value = statement.expr;
-    if (value != null) resolveExpression(value);
+    if (value != null) {
+      if (currentFunction == FunctionType.initializer) {
+        Dox.error(-1, 'Can\'t return a value from an initializer.');
+      }
+      resolveExpression(value);
+    }
   }
 
   @override
@@ -202,6 +207,9 @@ class Resolver implements Visitor<void> {
 
     for (final method in klass.methods) {
       FunctionType declaration = FunctionType.method;
+      if (declaration.name.toString() == 'init') {
+        declaration = FunctionType.initializer;
+      }
       resolveFunction(method, declaration);
     }
 
