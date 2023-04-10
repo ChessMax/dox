@@ -1,0 +1,4 @@
+enum ClassType {
+  none,
+  klass,
+}

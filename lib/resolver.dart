@@ -1,3 +1,4 @@
+import 'package:dox/class_type.dart';
 import 'package:dox/dox.dart';
 import 'package:dox/expr.dart';
 import 'package:dox/function_type.dart';
@@ -10,6 +11,7 @@ class Resolver implements Visitor<void> {
   final Interpreter interpreter;
   final List<Map<String, bool>> scopes = [];
   FunctionType currentFunction = FunctionType.none;
+  ClassType currentClass = ClassType.none;
 
   Resolver({required this.interpreter});
 
@@ -190,6 +192,9 @@ class Resolver implements Visitor<void> {
 
   @override
   void visitClass(Klass klass) {
+    final enclosingClass = currentClass;
+    currentClass = ClassType.klass;
+
     declare(klass.name);
 
     beginScope();
@@ -203,6 +208,8 @@ class Resolver implements Visitor<void> {
     endScope();
 
     define(klass.name);
+
+    currentClass = enclosingClass;
   }
 
   @override
@@ -215,5 +222,11 @@ class Resolver implements Visitor<void> {
   }
 
   @override
-  void visitThis(ThisExpr expr) => resolveLocal(expr, expr.keyword);
+  void visitThis(ThisExpr expr) {
+    if (currentClass == ClassType.none) {
+      Dox.error(-1, 'Can\'t use \'this\' outside of a class.');
+      return;
+    }
+    resolveLocal(expr, expr.keyword);
+  }
 }
