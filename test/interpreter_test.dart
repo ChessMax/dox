@@ -406,6 +406,14 @@ void main() {
       var callback = Thing().getCallback();
       callback();
       ''': 'Thing instance',
+      '''
+      class Foo {
+        init() {
+          print this;
+        }
+      }
+      var foo = Foo();
+      ''': 'Foo instance',
     };
 
     for (final kv in inputs.entries) {

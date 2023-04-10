@@ -393,11 +393,15 @@ class DoxClass extends Callable {
   String toString() => klass.name.toString();
 
   @override
-  int get arity => 0;
+  int get arity => findMethod('init')?.arity ?? 0;
 
   @override
   Object? invoke(Interpreter interpreter, List<Object?> arguments) {
     final instance = DoxInstance(klass: this);
+    final initializer = findMethod('init');
+    if (initializer != null) {
+      initializer.bind(instance).invoke(interpreter, arguments);
+    }
     return instance;
   }
 }
