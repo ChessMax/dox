@@ -37,6 +37,8 @@ abstract class Visitor<T> {
   T visitFuncDeclaration(FuncDeclaration func);
 
   T visitReturn(Return statement);
+
+  T visitClass(Klass klass);
 }
 
 class PrintVisitor extends Visitor<String> {
@@ -164,5 +166,14 @@ class PrintVisitor extends Visitor<String> {
     final expr = statement.expr;
     if (expr != null) return 'return ${expr.accept(this)};';
     return 'return;';
+  }
+
+  @override
+  String visitClass(Klass klass) {
+    final buffer = StringBuffer('class ${klass.name} {\n');
+    buffer.writeAll(klass.statements, '\n');
+    buffer.write('}');
+
+    return buffer.toString();
   }
 }

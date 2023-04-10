@@ -105,6 +105,16 @@ class Return extends Statement {
   T accept<T>(Visitor<T> visitor) => visitor.visitReturn(this);
 }
 
+class Klass extends Statement {
+  final Token name;
+  final List<Statement> statements;
+
+  Klass({required this.name, required this.statements});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitClass(this);
+}
+
 class Program extends Statement {
   final List<Statement> statements;
 

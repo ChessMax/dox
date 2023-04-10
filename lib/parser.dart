@@ -143,7 +143,8 @@ class Parser {
     );
   }
 
-  Statement parseFuncDeclaration() {
+  Statement parseFuncDeclaration([String type = 'function']) {
+    // TODO: use type?
     final name = consumeToken(TokenType.identifier);
     final params = <Token>[];
     consumeToken(TokenType.leftParen);
@@ -175,7 +176,21 @@ class Parser {
     return Return(expr: expr);
   }
 
+  Statement parseClass() {
+    final name = consumeToken(TokenType.identifier);
+    consumeToken(TokenType.leftBrace);
+    final statements = <Statement>[];
+    while (!isAtEnd && peek?.type != TokenType.rightBrace) {
+      statements.add(parseFuncDeclaration('method'));
+    }
+    consumeToken(TokenType.rightBrace);
+    return Klass(name: name, statements: statements);
+  }
+
   Statement parseStatement() {
+    if (tryConsumeToken(TokenType.classT)) {
+      return parseClass();
+    }
     if (tryConsumeToken(TokenType.returnT)) {
       return parseReturn();
     }

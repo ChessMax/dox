@@ -186,4 +186,10 @@ class Resolver implements Visitor<void> {
 
   @override
   void visitUnary(UnaryExpr expr) => resolveExpression(expr.expr);
+
+  @override
+  void visitClass(Klass klass) {
+    declare(klass.name);
+    define(klass.name);
+  }
 }

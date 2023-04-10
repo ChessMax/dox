@@ -340,6 +340,23 @@ class Interpreter extends Visitor<Object?> {
   }
 
   void resolve(Expr expr, int depth) => locals[expr] = depth;
+
+  @override
+  Object? visitClass(Klass klass) {
+    final value = DoxClass(klass: klass);
+    environment.define(klass.name.toString(), value);
+    environment.setValue(klass.name.toString(), value);
+    return null;
+  }
+}
+
+class DoxClass {
+  final Klass klass;
+
+  DoxClass({required this.klass});
+
+  @override
+  String toString() => klass.name.toString();
 }
 
 class Func extends Callable {
