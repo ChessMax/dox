@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dox/callable.dart';
+import 'package:dox/dox_instance.dart';
 import 'package:dox/environment.dart';
 import 'package:dox/expr.dart';
 import 'package:dox/output.dart';
@@ -350,13 +351,22 @@ class Interpreter extends Visitor<Object?> {
   }
 }
 
-class DoxClass {
+class DoxClass extends Callable {
   final Klass klass;
 
   DoxClass({required this.klass});
 
   @override
   String toString() => klass.name.toString();
+
+  @override
+  int get arity => 0;
+
+  @override
+  Object? invoke(Interpreter interpreter, List<Object?> arguments) {
+    final instance = DoxInstance(klass: klass);
+    return instance;
+  }
 }
 
 class Func extends Callable {

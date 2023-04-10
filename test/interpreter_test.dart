@@ -355,6 +355,10 @@ void main() {
       }
       print DevonshireCream;
       ''': 'DevonshireCream',
+      '''class Bagel {}
+      var bagel = Bagel();
+      print bagel;
+      ''': 'Bagel instance',
     };
 
     for (final kv in inputs.entries) {
