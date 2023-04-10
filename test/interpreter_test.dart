@@ -441,4 +441,38 @@ void main() {
       expect(output.output, expected, reason: input);
     }
   });
+
+  test('Class inheritance should work', () {
+    final inputs = <String, Object?>{
+      '''
+      class Doughnut {}
+      class BosonCream < Doughnut {}
+      ''': '',
+      '''
+      class Doughnut {
+       cook() {
+       print "Fry until golden brown.";
+       }
+      }
+      class BostonCream < Doughnut {}
+      BostonCream().cook();
+      ''': 'Fry until golden brown.',
+    };
+
+    for (final kv in inputs.entries) {
+      output.clear();
+
+      final input = kv.key;
+      final expected = kv.value;
+
+      final tokens = Lexer.enumerate(input);
+      final parser = Parser(tokens: tokens.toList());
+      final statement = parser.parse();
+      final resolver = Resolver(interpreter: interpreter);
+      resolver.resolveStatement(statement);
+      interpreter.execute(statement);
+
+      expect(output.output, expected, reason: input);
+    }
+  });
 }

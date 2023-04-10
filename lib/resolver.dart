@@ -201,6 +201,16 @@ class Resolver implements Visitor<void> {
     currentClass = ClassType.klass;
 
     declare(klass.name);
+    define(klass.name);
+
+    final superClass = klass.superClass;
+
+    if (superClass != null) {
+      if (klass.name.toString() == superClass.name.toString()) {
+        Dox.error(-1, 'A class can\'t inherit from itself.');
+      }
+      resolveExpression(superClass);
+    }
 
     beginScope();
     peekScope['this'] = true;

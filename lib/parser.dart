@@ -178,13 +178,18 @@ class Parser {
 
   Statement parseClass() {
     final name = consumeToken(TokenType.identifier);
+    VariableExpr? superClass;
+    if (tryConsumeToken(TokenType.less)) {
+      superClass = VariableExpr(name: consumeToken(TokenType.identifier));
+    }
+
     consumeToken(TokenType.leftBrace);
     final statements = <FuncDeclaration>[];
     while (!isAtEnd && peek?.type != TokenType.rightBrace) {
       statements.add(parseFuncDeclaration('method'));
     }
     consumeToken(TokenType.rightBrace);
-    return Klass(name: name, methods: statements);
+    return Klass(name: name, superClass: superClass, methods: statements);
   }
 
   Statement parseStatement() {

@@ -346,6 +346,17 @@ class Interpreter extends Visitor<Object?> {
 
   @override
   Object? visitClass(Klass klass) {
+    final superClassExpr = klass.superClass;
+    DoxClass? superClass;
+
+    if (superClassExpr != null) {
+      final rawSuperClass = evaluate(superClassExpr);
+      if (rawSuperClass is! DoxClass) {
+        throw 'Runtime error: superclass must be a class.';
+      }
+      superClass = rawSuperClass;
+    }
+
     environment.define(klass.name.toString(), null);
 
     final methods = <String, Func>{};
@@ -357,7 +368,11 @@ class Interpreter extends Visitor<Object?> {
       );
     }
 
-    final value = DoxClass(klass: klass, methods: methods);
+    final value = DoxClass(
+      klass: klass,
+      methods: methods,
+      superClass: superClass,
+    );
     environment.setValue(klass.name.toString(), value);
     return null;
   }
@@ -388,11 +403,17 @@ class Interpreter extends Visitor<Object?> {
 
 class DoxClass extends Callable {
   final Klass klass;
+  final DoxClass? superClass;
   final Map<String, Func> methods;
 
-  DoxClass({required this.klass, required this.methods});
+  DoxClass({
+    required this.klass,
+    required this.superClass,
+    required this.methods,
+  });
 
-  Func? findMethod(String name) => methods[name];
+  Func? findMethod(String name) =>
+      methods[name] ?? superClass?.findMethod(name);
 
   @override
   String toString() => klass.name.toString();

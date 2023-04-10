@@ -107,9 +107,10 @@ class Return extends Statement {
 
 class Klass extends Statement {
   final Token name;
+  final VariableExpr? superClass;
   final List<FuncDeclaration> methods;
 
-  Klass({required this.name, required this.methods});
+  Klass({required this.name, required this.superClass, required this.methods});
 
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitClass(this);
