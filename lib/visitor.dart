@@ -39,6 +39,12 @@ abstract class Visitor<T> {
   T visitReturn(Return statement);
 
   T visitClass(Klass klass);
+
+  T visitGet(GetExpr get);
+
+  T visitSet(SetExpr set);
+
+  T visitThis(ThisExpr expr);
 }
 
 class PrintVisitor extends Visitor<String> {
@@ -171,9 +177,21 @@ class PrintVisitor extends Visitor<String> {
   @override
   String visitClass(Klass klass) {
     final buffer = StringBuffer('class ${klass.name} {\n');
-    buffer.writeAll(klass.statements, '\n');
+    buffer.writeAll(klass.methods, '\n');
     buffer.write('}');
 
     return buffer.toString();
   }
+
+  @override
+  String visitGet(GetExpr get) {
+    return '${get.object.accept(this)}.${get.name}';
+  }
+
+  @override
+  String visitSet(SetExpr set) =>
+      '${set.object.accept(this)}.${set.name}${set.value.accept(this)}';
+
+  @override
+  String visitThis(ThisExpr thisExpr) => 'this';
 }

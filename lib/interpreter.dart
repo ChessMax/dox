@@ -344,17 +344,50 @@ class Interpreter extends Visitor<Object?> {
 
   @override
   Object? visitClass(Klass klass) {
-    final value = DoxClass(klass: klass);
-    environment.define(klass.name.toString(), value);
+    environment.define(klass.name.toString(), null);
+
+    final methods = <String, Func>{};
+    for (final method in klass.methods) {
+      methods[method.name.toString()] =
+          Func(environment: environment, func: method);
+    }
+
+    final value = DoxClass(klass: klass, methods: methods);
     environment.setValue(klass.name.toString(), value);
     return null;
   }
+
+  @override
+  Object? visitGet(GetExpr get) {
+    final object = evaluate(get.object);
+    if (object is! DoxInstance) {
+      throw 'Runtime error: Only instances have properties';
+    }
+    return object.getProperty(get.name.toString());
+  }
+
+  @override
+  Object? visitSet(SetExpr set) {
+    final object = evaluate(set.object);
+    if (object is! DoxInstance) {
+      throw 'Runtime error: Only instances have fields';
+    }
+
+    final value = evaluate(set.value);
+    return object.setProperty(set.name.toString(), value);
+  }
+
+  @override
+  Object? visitThis(ThisExpr expr) => lookUpVariable(expr.keyword, expr);
 }
 
 class DoxClass extends Callable {
   final Klass klass;
+  final Map<String, Func> methods;
 
-  DoxClass({required this.klass});
+  DoxClass({required this.klass, required this.methods});
+
+  Func? findMethod(String name) => methods[name];
 
   @override
   String toString() => klass.name.toString();
@@ -364,7 +397,7 @@ class DoxClass extends Callable {
 
   @override
   Object? invoke(Interpreter interpreter, List<Object?> arguments) {
-    final instance = DoxInstance(klass: klass);
+    final instance = DoxInstance(klass: this);
     return instance;
   }
 }
@@ -394,6 +427,12 @@ class Func extends Callable {
 
   @override
   String toString() => '<fn ${func.name}>';
+
+  Func bind(DoxInstance instance) {
+    final environment = Environment(parent: this.environment);
+    environment.define('this', instance);
+    return Func(environment: environment, func: func);
+  }
 }
 
 abstract class NativeFunc extends Callable {

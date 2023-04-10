@@ -359,6 +359,53 @@ void main() {
       var bagel = Bagel();
       print bagel;
       ''': 'Bagel instance',
+      '''
+      class User {}
+      var user = User();
+      user.name = "Ivan";
+      print user.name;
+      ''': 'Ivan',
+      '''
+      class Bacon {
+        eat() {
+          print "Crunch crunch crunch!";
+        }
+      }
+      
+      Bacon().eat();
+      ''': 'Crunch crunch crunch!',
+      '''
+      class Egotist {
+        speak() {
+          print this;
+        }
+      }
+      var method = Egotist().speak;
+      method();
+      ''': 'Egotist instance',
+      '''
+      class Cake {
+       taste() {
+        var adjective = "delicious";
+        print "The " + this.flavor + " cake is " + adjective + "!";
+       }
+      }
+      var cake = Cake();
+      cake.flavor = "German chocolate";
+      cake.taste();
+      ''': 'The German chocolate cake is delicious!',
+      '''
+      class Thing {
+       getCallback() {
+        fun localFunction() {
+          print this;
+        }
+        return localFunction;
+       }
+      }
+      var callback = Thing().getCallback();
+      callback();
+      ''': 'Thing instance',
     };
 
     for (final kv in inputs.entries) {

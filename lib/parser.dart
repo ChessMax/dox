@@ -143,7 +143,7 @@ class Parser {
     );
   }
 
-  Statement parseFuncDeclaration([String type = 'function']) {
+  FuncDeclaration parseFuncDeclaration([String type = 'function']) {
     // TODO: use type?
     final name = consumeToken(TokenType.identifier);
     final params = <Token>[];
@@ -179,12 +179,12 @@ class Parser {
   Statement parseClass() {
     final name = consumeToken(TokenType.identifier);
     consumeToken(TokenType.leftBrace);
-    final statements = <Statement>[];
+    final statements = <FuncDeclaration>[];
     while (!isAtEnd && peek?.type != TokenType.rightBrace) {
       statements.add(parseFuncDeclaration('method'));
     }
     consumeToken(TokenType.rightBrace);
-    return Klass(name: name, statements: statements);
+    return Klass(name: name, methods: statements);
   }
 
   Statement parseStatement() {
@@ -230,6 +230,8 @@ class Parser {
       final value = parseAssignment();
       if (expr is VariableExpr) {
         return AssignExpr(name: expr.name, value: value);
+      } else if (expr is GetExpr) {
+        return SetExpr(object: expr.object, name: expr.name, value: value);
       }
       Dox.error(-1, 'Invalid assignment target.');
     }
@@ -343,6 +345,9 @@ class Parser {
     while (true) {
       if (tryConsumeToken(TokenType.leftParen)) {
         expr = parseCallArguments(expr);
+      } else if (tryConsumeToken(TokenType.dot)) {
+        final name = consumeToken(TokenType.identifier);
+        expr = GetExpr(object: expr, name: name);
       } else {
         break;
       }
@@ -371,6 +376,10 @@ class Parser {
   Expr parsePrimary() {
     final literal = tryParseLiteral();
     if (literal != null) return LiteralExpr(value: literal.value);
+
+    if (tryConsumeToken(TokenType.thisT)) {
+      return ThisExpr(keyword: tokens[position - 1]);
+    }
 
     final identifier = tryParseIdentifier();
     if (identifier != null) return VariableExpr(name: identifier);

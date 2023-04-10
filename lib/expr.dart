@@ -15,6 +15,36 @@ class CallExpr extends Expr {
   T accept<T>(Visitor<T> visitor) => visitor.visitCall(this);
 }
 
+class GetExpr extends Expr {
+  final Expr object;
+  final Token name;
+
+  GetExpr({required this.object, required this.name});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitGet(this);
+}
+
+class SetExpr extends Expr {
+  final Expr object;
+  final Token name;
+  final Expr value;
+
+  SetExpr({required this.object, required this.name, required this.value});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitSet(this);
+}
+
+class ThisExpr extends Expr {
+  final Token keyword;
+
+  ThisExpr({required this.keyword});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitThis(this);
+}
+
 class AssignExpr extends Expr {
   final Token name;
   final Expr value;
@@ -27,6 +57,7 @@ class AssignExpr extends Expr {
 
 class ParenExpr extends Expr {
   final Expr expr;
+
   ParenExpr({required this.expr});
 
   @override

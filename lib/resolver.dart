@@ -97,6 +97,7 @@ class Resolver implements Visitor<void> {
       define(param);
     }
     resolveStatements(func.body);
+
     endScope();
     currentFunction = enclosingFunction;
   }
@@ -190,6 +191,29 @@ class Resolver implements Visitor<void> {
   @override
   void visitClass(Klass klass) {
     declare(klass.name);
+
+    beginScope();
+    peekScope['this'] = true;
+
+    for (final method in klass.methods) {
+      FunctionType declaration = FunctionType.method;
+      resolveFunction(method, declaration);
+    }
+
+    endScope();
+
     define(klass.name);
   }
+
+  @override
+  void visitGet(GetExpr get) => resolveExpression(get.object);
+
+  @override
+  void visitSet(SetExpr set) {
+    resolveExpression(set.value);
+    resolveExpression(set.object);
+  }
+
+  @override
+  void visitThis(ThisExpr expr) => resolveLocal(expr, expr.keyword);
 }
