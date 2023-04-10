@@ -206,10 +206,14 @@ class Resolver implements Visitor<void> {
     final superClass = klass.superClass;
 
     if (superClass != null) {
+      currentClass = ClassType.subClass;
       if (klass.name.toString() == superClass.name.toString()) {
         Dox.error(-1, 'A class can\'t inherit from itself.');
       }
       resolveExpression(superClass);
+
+      beginScope();
+      peekScope['super'] = true;
     }
 
     beginScope();
@@ -224,6 +228,8 @@ class Resolver implements Visitor<void> {
     }
 
     endScope();
+
+    if (superClass != null) endScope();
 
     define(klass.name);
 
@@ -244,6 +250,16 @@ class Resolver implements Visitor<void> {
     if (currentClass == ClassType.none) {
       Dox.error(-1, 'Can\'t use \'this\' outside of a class.');
       return;
+    }
+    resolveLocal(expr, expr.keyword);
+  }
+
+  @override
+  void visitSuper(SuperExpr expr) {
+    if (currentClass == ClassType.none) {
+      Dox.error(-1, 'Can\'t use "super" outside of a class.');
+    } else if (currentClass != ClassType.subClass) {
+      Dox.error(-1, 'Can\'t use "super" in a class with no superclass.');
     }
     resolveLocal(expr, expr.keyword);
   }

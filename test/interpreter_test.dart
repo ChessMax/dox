@@ -451,12 +451,44 @@ void main() {
       '''
       class Doughnut {
        cook() {
-       print "Fry until golden brown.";
+        print "Fry until golden brown.";
        }
       }
       class BostonCream < Doughnut {}
       BostonCream().cook();
       ''': 'Fry until golden brown.',
+      '''
+      class Doughnut {
+       cook() {
+        print "Fry until golden brown.";
+       }
+      }
+      class BostonCream < Doughnut {
+       cook() {
+         super.cook();
+         print "Pipe full of custard and coat with chocolate.";
+       }
+      }
+      BostonCream().cook();
+      ''': 'Fry until golden brown.\n'
+              'Pipe full of custard and coat with chocolate.',
+      '''
+      class A {
+       method() {
+        print "Method A";
+       }
+      }
+      class B < A {
+       method() {
+        print "Method B";
+       }
+       test() {
+        super.method();
+       }
+      }
+      class C < B {}
+      C().test();
+      ''': 'Method A',
     };
 
     for (final kv in inputs.entries) {

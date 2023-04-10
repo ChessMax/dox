@@ -359,6 +359,11 @@ class Interpreter extends Visitor<Object?> {
 
     environment.define(klass.name.toString(), null);
 
+    if (superClass != null) {
+      environment = Environment(parent: environment);
+      environment.define('super', superClass);
+    }
+
     final methods = <String, Func>{};
     for (final method in klass.methods) {
       methods[method.name.toString()] = Func(
@@ -373,6 +378,9 @@ class Interpreter extends Visitor<Object?> {
       methods: methods,
       superClass: superClass,
     );
+    if (superClass != null) {
+      environment = environment.parent!;
+    }
     environment.setValue(klass.name.toString(), value);
     return null;
   }
@@ -399,6 +407,18 @@ class Interpreter extends Visitor<Object?> {
 
   @override
   Object? visitThis(ThisExpr expr) => lookUpVariable(expr.keyword, expr);
+
+  @override
+  Object? visitSuper(SuperExpr expr) {
+    final distance = locals[expr];
+    final superClass = environment.getAt(distance!, 'super') as DoxClass;
+    final object = environment.getAt(distance - 1, 'this') as DoxInstance;
+    final method = superClass.findMethod(expr.method.toString());
+    if (method == null) {
+      throw 'Runtime error: Undefined property "${expr.method}".';
+    }
+    return method.bind(object);
+  }
 }
 
 class DoxClass extends Callable {

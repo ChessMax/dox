@@ -382,6 +382,13 @@ class Parser {
     final literal = tryParseLiteral();
     if (literal != null) return LiteralExpr(value: literal.value);
 
+    if (tryConsumeToken(TokenType.superT)) {
+      final keyword = tokens[position - 1];
+      consumeToken(TokenType.dot);
+      final method = consumeToken(TokenType.identifier);
+      return SuperExpr(keyword: keyword, method: method);
+    }
+
     if (tryConsumeToken(TokenType.thisT)) {
       return ThisExpr(keyword: tokens[position - 1]);
     }

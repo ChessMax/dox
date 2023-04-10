@@ -45,6 +45,16 @@ class ThisExpr extends Expr {
   T accept<T>(Visitor<T> visitor) => visitor.visitThis(this);
 }
 
+class SuperExpr extends Expr {
+  final Token keyword;
+  final Token method;
+
+  SuperExpr({required this.keyword, required this.method});
+
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitSuper(this);
+}
+
 class AssignExpr extends Expr {
   final Token name;
   final Expr value;

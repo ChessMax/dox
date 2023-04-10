@@ -45,6 +45,8 @@ abstract class Visitor<T> {
   T visitSet(SetExpr set);
 
   T visitThis(ThisExpr expr);
+
+  T visitSuper(SuperExpr expr);
 }
 
 class PrintVisitor extends Visitor<String> {
@@ -194,4 +196,7 @@ class PrintVisitor extends Visitor<String> {
 
   @override
   String visitThis(ThisExpr expr) => 'this';
+
+  @override
+  String visitSuper(SuperExpr expr) => 'super.${expr.method}';
 }
