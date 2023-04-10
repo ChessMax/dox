@@ -193,5 +193,5 @@ class PrintVisitor extends Visitor<String> {
       '${set.object.accept(this)}.${set.name}${set.value.accept(this)}';
 
   @override
-  String visitThis(ThisExpr thisExpr) => 'this';
+  String visitThis(ThisExpr expr) => 'this';
 }

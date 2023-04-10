@@ -414,6 +414,15 @@ void main() {
       }
       var foo = Foo();
       ''': 'Foo instance',
+      '''
+      class Foo {
+        init() {
+          print this;
+        }
+      }
+      var foo = Foo();
+      foo.init();
+      ''': 'Foo instance\nFoo instance',
     };
 
     for (final kv in inputs.entries) {

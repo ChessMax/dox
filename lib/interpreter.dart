@@ -329,7 +329,13 @@ class Interpreter extends Visitor<Object?> {
   @override
   Object? visitFuncDeclaration(FuncDeclaration func) {
     final name = func.name.toString();
-    environment.define(name, Func(environment: environment, func: func));
+    environment.define(
+        name,
+        Func(
+          environment: environment,
+          func: func,
+          isInitializer: false,
+        ));
     return null;
   }
 
@@ -348,8 +354,11 @@ class Interpreter extends Visitor<Object?> {
 
     final methods = <String, Func>{};
     for (final method in klass.methods) {
-      methods[method.name.toString()] =
-          Func(environment: environment, func: method);
+      methods[method.name.toString()] = Func(
+        environment: environment,
+        func: method,
+        isInitializer: method.name.toString() == 'init',
+      );
     }
 
     final value = DoxClass(klass: klass, methods: methods);
@@ -409,8 +418,13 @@ class DoxClass extends Callable {
 class Func extends Callable {
   final FuncDeclaration func;
   final Environment environment;
+  final bool isInitializer;
 
-  Func({required this.environment, required this.func});
+  Func({
+    required this.environment,
+    required this.func,
+    required this.isInitializer,
+  });
 
   @override
   int get arity => func.params.length;
@@ -426,6 +440,8 @@ class Func extends Callable {
 
     interpreter.executeBlock(func.body, environment);
 
+    if (isInitializer) return environment.getAt(0, 'this');
+
     return null;
   }
 
@@ -435,7 +451,11 @@ class Func extends Callable {
   Func bind(DoxInstance instance) {
     final environment = Environment(parent: this.environment);
     environment.define('this', instance);
-    return Func(environment: environment, func: func);
+    return Func(
+      environment: environment,
+      func: func,
+      isInitializer: isInitializer,
+    );
   }
 }
 
