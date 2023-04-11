@@ -2,9 +2,10 @@ Dox is a [jlox](https://github.com/munificent/craftinginterpreters) written in D
 
 Changes:
 
-* For loop isn't a syntatic sugar;
+* for loop isn't a syntatic sugar;
+* native readLine function.
 
 TODO:
 
-* Some examples;
-* Error reporting.
+* some examples;
+* error reporting.
