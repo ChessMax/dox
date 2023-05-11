@@ -7,5 +7,6 @@ Changes:
 
 TODO:
 
+* migrate to Dart 3.0;
 * some examples;
 * error reporting.
